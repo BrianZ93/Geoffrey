@@ -1,0 +1,19 @@
+services:
+  bachelor_party:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./frontend:/app
+    network_mode: host
+    command: yarn quasar dev
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    volumes:
+      - ./backend:/app
+      - ./backend/.air.toml:/app/.air.toml
+    network_mode: host
+    command: air

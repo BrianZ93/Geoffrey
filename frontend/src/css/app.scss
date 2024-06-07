@@ -1,0 +1,153 @@
+// app global css in SCSS form
+.main-section {
+  display: flex;
+  flex-direction: row;
+}
+
+.section {
+  box-shadow: 0 0 4px 2px $accent;
+  background-color: $primary;
+}
+
+.sidebar-section {
+  margin-top: 2vh;
+  width: 20vw;
+  margin-right: 1vw;
+  height: 90vh;
+  background: linear-gradient(
+    107deg,
+    rgb(13, 198, 180) 8.1%,
+    rgb(33, 198, 138) 79.5%
+  ) !important;
+}
+
+.sidebar-tab-active {
+  background-color: $bg-active;
+}
+
+.main-content-section {
+  margin-top: 2vh;
+  width: 78vw;
+  height: 90vh;
+}
+
+.sub-section {
+  box-shadow: 0 0 0px 01px $accent;
+  background-color: $secondary;
+}
+
+.dialog-card-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-actions-container {
+  margin-top: auto;
+}
+
+.date-picker-container {
+  margin-top: 1vh;
+}
+
+.string-input-container {
+  margin-top: 1vh;
+}
+
+.date-picker-range {
+  background-color: $secondary;
+  color: white;
+}
+
+.date-picker-range .q-date__days--selected .q-date__day--in,
+.date-picker-range .q-date__day--selected .q-date__day__content,
+.date-picker-range .q-btn--active,
+.date-picker-range .q-date__day--selected,
+.date-picker-range .q-date__day--in:hover,
+.date-picker-range .q-date__edit-range {
+  background-color: $primary !important;
+}
+
+.date-picker-range .q-btn {
+  color: white !important;
+}
+
+.date-picker-range .q-date__edit-range-from {
+  background-color: $primary;
+}
+
+.date-picker-range .q-date__edit-range-from .q-btn {
+  background-color: $secondary;
+}
+
+.date-picker-input {
+  background-color: $secondary;
+  color: white;
+}
+
+// Loading Page
+.loading-text {
+  opacity: 85%;
+  color: tertiary;
+}
+
+// Events Page Specific CSS classes
+
+.events-header-row {
+  display: flex;
+  height: 8vh;
+}
+
+.events-main-content-row {
+  display: flex;
+  height: 78vh;
+  justify-content: center;
+}
+
+.event-boxes-container {
+  display: flex;
+  flex-direction: row;
+  height: 20vh;
+}
+
+.event-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 15vw;
+  height: 100%;
+  background-color: $secondary;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: transform 0.3s;
+  margin-left: 1vw;
+}
+
+.event-box:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.big-number {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.caption {
+  font-size: 16px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.events-table-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.events-table {
+  height: 50vh;
+  width: 70vw;
+  background-color: $secondary;
+}
