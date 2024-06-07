@@ -10,9 +10,9 @@ export const createEvent = async (event: Event): Promise<void> => {
       `${serverConfig.api_url}/create-event`,
       event
     );
-    console.log('Table created successfully:', response.data);
+    console.log('Event created successfully:', response.data);
   } catch (error) {
-    console.error('Error creating table:', error);
+    console.error('Error creating event:', error);
     throw error;
   }
 };

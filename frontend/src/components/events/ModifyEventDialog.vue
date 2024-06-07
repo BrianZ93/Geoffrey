@@ -11,7 +11,7 @@
     >
       <q-card-section>
         <q-card-section>
-          <div class="text-h6 text-center">Add a New Event</div>
+          <div class="text-h6 text-center">Modify Event</div>
         </q-card-section>
 
         <q-separator dark />
@@ -21,13 +21,14 @@
           <string-input
             label="Event Title"
             :onValueChange="handleEventNameChange"
+            :initialValue="activeEvent.title"
           />
           <!-- Event Date -->
           <date-picker label="Event Date" :onUpdate="handleDateUpdate" />
         </q-card-section>
       </q-card-section>
 
-      <form-actions :onSubmit="onSubmit" :onCancel="handleCancel" />
+      <form-actions :onCancel="handleCancel" :onModify="onModify" />
     </q-card>
   </q-dialog>
 </template>
@@ -35,11 +36,11 @@
 <script setup lang="ts">
 import { Notify } from 'quasar';
 import { ref, computed } from 'vue';
-import { useAppStateStore } from 'src/stores/main-application-state';
-import { useEventsStore, EventsLoadState } from 'src/stores/events-state';
-import { Event } from 'src/models/events/event';
+import { useAppStateStore } from '../../stores/main-application-state';
+import { useEventsStore, EventsLoadState } from '../../stores/events-state';
+import { Event } from '../../models/events/event';
 
-import { createEvent } from '../../api/events/create_event';
+import { updateEvent } from '../../api/events/modify_event';
 import { getEvents } from '../../api/events/get_events';
 import DatePicker from '../../components/styled_objects/DatePicker.vue';
 import StringInput from '../../components/styled_objects/StringInput.vue';
@@ -50,11 +51,12 @@ import { handleOnValueChange } from '../../components/styled_objects/helpers/Str
 const appState = useAppStateStore();
 const eventsState = useEventsStore();
 
-const persistent = computed(() => appState.addEventDialogOpen);
+const persistent = computed(() => appState.modifyEventDialogOpen);
+const activeEvent = eventsState.activeEvent as Event;
 
-const eventTitle = ref<string | null>('');
-const startDate = ref<string | null>(null);
-const endDate = ref<string | null>(null);
+const eventTitle = ref<string | null>(activeEvent.title);
+const startDate = ref<string | null>(activeEvent.startTime);
+const endDate = ref<string | null>(activeEvent.endTime);
 
 const handleEventNameChange = (value: string | null) => {
   handleOnValueChange(value, eventTitle);
@@ -64,18 +66,23 @@ const handleDateUpdate = (date: { from: string; to: string } | string) => {
   handleUpdateDates(date, startDate, endDate);
 };
 
-const handleCreateEvent = async (
+const handleModifyEvent = async (
   title: string,
   startDate: string,
   endDate: string
 ) => {
-  const event = new Event('0', title, startDate, endDate, [], []);
-  await createEvent(event);
+  const event = new Event(
+    activeEvent.id,
+    title,
+    startDate,
+    endDate,
+    activeEvent.guests,
+    activeEvent.venues
+  );
+  await updateEvent(event);
 };
 
-const onSubmit = async () => {
-  console.log(startDate.value);
-  console.log(typeof startDate.value);
+const onModify = async () => {
   if (!eventTitle.value || !startDate.value || !endDate.value) {
     let emptyFields = [] as string[];
     if (!eventTitle.value) {
@@ -110,7 +117,7 @@ const onSubmit = async () => {
         color: 'red-5',
       });
     } else {
-      await handleCreateEvent(eventTitle.value, startDate.value, endDate.value);
+      await handleModifyEvent(eventTitle.value, startDate.value, endDate.value);
 
       eventsState.loadState = EventsLoadState.loading;
 
@@ -118,7 +125,7 @@ const onSubmit = async () => {
         color: 'green-4',
         textColor: 'white',
         icon: 'cloud_done',
-        message: 'Creating Event',
+        message: 'Modifying Event',
         type: 'loading',
       });
 
@@ -128,20 +135,24 @@ const onSubmit = async () => {
         color: 'green-4',
         textColor: 'white',
         icon: 'cloud_done',
-        message: 'Event Created',
+        message: 'Event Modified',
       });
 
       eventsState.loadState = EventsLoadState.hasEvents;
       if (typeof fetchedEvents !== 'string') {
         eventsState.events = fetchedEvents;
       }
-      appState.addEventDialogOpen = false;
+      appState.modifyEventDialogOpen = false;
     }
   }
 };
 
+// const handleDeleteEvent = async () => {
+//   appState.modifyEventDialogOpen = false;
+// };
+
 const handleCancel = () => {
-  appState.addEventDialogOpen = false;
+  appState.modifyEventDialogOpen = false;
 };
 </script>
 ../../api/events/create_event

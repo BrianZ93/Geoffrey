@@ -1,40 +1,34 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
-    <q-dialog
-      v-model="persistent"
-      persistent
-      transition-show="scale"
-      transition-hide="scale"
-    >
-      <q-card class="bg-secondary text-white" style="width: 50vw; height: 50vh">
+  <q-dialog
+    v-model="persistent"
+    persistent
+    transition-show="scale"
+    transition-hide="scale"
+  >
+    <q-card class="bg-secondary text-white" style="width: 50vw; height: 50vh">
+      <q-card-section>
         <q-card-section>
-          <q-card-section>
-            <div class="text-h6 text-center">Add a New Guest</div>
-          </q-card-section>
-
-          <q-separator dark />
-
-          <q-card-section class="q-pt-none">
-            <!-- Guest Name -->
-            <q-input v-model="guestName" label="Guest Name" />
-            <!-- Phone Number -->
-            <q-input
-              v-model="phoneNumber"
-              type="tel"
-              label="Telephone number"
-            />
-            <!-- Email Address -->
-            <q-input v-model="email" type="email" label="Email" />
-          </q-card-section>
+          <div class="text-h6 text-center">Add a New Guest</div>
         </q-card-section>
 
-        <q-card-actions align="right" class="bg-primary text-teal">
-          <q-btn flat label="Add Guest" @click="onSubmit" />
-          <q-btn flat label="Cancel" @click="handleCancel" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-  </div>
+        <q-separator dark />
+
+        <q-card-section class="q-pt-none">
+          <!-- Guest Name -->
+          <q-input v-model="guestName" label="Guest Name" />
+          <!-- Phone Number -->
+          <q-input v-model="phoneNumber" type="tel" label="Telephone number" />
+          <!-- Email Address -->
+          <q-input v-model="email" type="email" label="Email" />
+        </q-card-section>
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-primary text-teal">
+        <q-btn flat label="Add Guest" @click="onSubmit" />
+        <q-btn flat label="Cancel" @click="handleCancel" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">

@@ -1,13 +1,20 @@
 <template>
   <div class="q-pa-md">
-    <create-events-dialog />
-    <add-guest-dialog />
+    <create-events-dialog v-if="appState.addEventDialogOpen" />
+    <modify-events-dialog v-if="appState.modifyEventDialogOpen" />
+    <add-guest-dialog v-if="appState.addGuestDialogOpen" />
 
     <div class="row section events-header-row">
       <!-- First row content -->
       <q-toolbar class="bg-secondary">
-        <q-avatar><q-icon name="celebration" size="md"></q-icon></q-avatar>
-        <drop-down-list :listItems="events" />
+        <drop-down-list
+          :listItems="events"
+          icon="celebration"
+          :onSelect="handleSelectEvent"
+          :onModify="handleOpenModifyEventDialog"
+          :activeItem="convertActiveEventToListItem"
+          width="25"
+        />
 
         <q-toolbar-title class="bg-secondary text-white"
           >Events</q-toolbar-title
@@ -43,23 +50,27 @@ import { ref, computed } from 'vue';
 import { useEventsStore } from 'src/stores/events-state';
 import GuestsTable from '../../../components/events/GuestsTable.vue';
 import CreateEventsDialog from './../../../components/events/CreateEventDialog.vue';
+import ModifyEventsDialog from './../../../components/events/ModifyEventDialog.vue';
 
-import {
-  DropDownList,
-  ListItem,
-} from '../../../components/styled_objects/DropdownList.vue';
+import DropDownList from '../../../components/styled_objects/DropdownList.vue';
+import { ListItem } from 'src/components/styled_objects/helpers/DropdownList';
 
 import AddGuestDialog from '../../../components/events/AddGuestDialog.vue';
 import { useAppStateStore } from 'src/stores/main-application-state';
+// import { Guest } from 'src/models/events/guest';
 
 const appState = useAppStateStore();
 const eventsState = useEventsStore();
 
-const listItems = ref<ListItem[]>([]);
-const events = computed(() => eventsState.events as Event[]);
-
-const selectedEvent = ref(null);
-const eventOptions = ref<{ label: string; value: string }[]>([]);
+const events = computed(() => {
+  let listItems = [] as ListItem[];
+  const events = eventsState.events as Event[];
+  for (let event of events) {
+    const new_item = new ListItem(event.id, event.title, 'caption');
+    listItems.push(new_item);
+  }
+  return listItems;
+});
 
 const boxes = ref([
   { icon: 'schedule_send', number: 10, caption: 'Remaining RSVPs' },
@@ -72,27 +83,54 @@ const handleCreateEventDialogOpen = () => {
   appState.addEventDialogOpen = true;
 };
 
-const filterFn = (val: string, update: (callback: () => void) => void) => {
-  update(() => {
-    if (val === '') {
-      eventOptions.value = events.value.map((event) => ({
-        label: event.title,
-        value: event.id,
-      }));
-    } else {
-      const needle = val.toLowerCase();
-      eventOptions.value = events.value
-        .filter((event) => event.title.toLowerCase().includes(needle))
-        .map((event) => ({ label: event.title, value: event.id }));
-    }
-
-    const selected =
-      events.value.find((event) => event.id === selectedEvent.value) || null;
-
-    if (selected !== null) {
-      eventsState.activeEvent = selected;
-      console.log(selected);
-    }
-  });
+const handleOpenModifyEventDialog = () => {
+  appState.modifyEventDialogOpen = true;
 };
+
+const calculateEventValues = (selectedEvent: Event) => {
+  let remainingRsvps = 0;
+  let confirmedGuests = 0;
+  // let venues = selectedEvent.venues ? selectedEvent.venues.length : 0;
+  // let daysUntilEvent = 0;
+  // Calculate guest data
+  if (selectedEvent.guests) {
+    for (let guest of selectedEvent.guests) {
+      if (guest.attending) {
+        confirmedGuests += 1;
+      }
+
+      if (!guest.rsvpReceived) {
+        remainingRsvps += 1;
+      }
+    }
+  }
+
+  console.log(selectedEvent.startTime);
+  console.log(confirmedGuests, remainingRsvps);
+};
+
+const handleSelectEvent = (val: ListItem) => {
+  const selectedEventId = val.id;
+  const selectedEvent = eventsState.events.find(
+    (event) => event.id === selectedEventId
+  );
+  if (selectedEvent) {
+    eventsState.activeEvent = selectedEvent;
+    console.log('Selected Event:', selectedEvent);
+    calculateEventValues(selectedEvent);
+  } else {
+    console.log('Event not found');
+  }
+};
+
+const convertActiveEventToListItem = computed(() => {
+  const activeEvent = eventsState.activeEvent;
+  const convertedListItem = new ListItem(
+    activeEvent.id,
+    activeEvent.title,
+    'caption'
+  );
+
+  return convertedListItem;
+});
 </script>

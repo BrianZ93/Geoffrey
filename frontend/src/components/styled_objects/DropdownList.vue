@@ -1,56 +1,65 @@
 <template>
-  <div class="q-pa-md">
-    <q-btn-dropdown split color="cyan" push no-caps @click="onMainClick">
-      <template v-slot:label>
-        <div class="row items-center no-wrap">
-          <q-icon left name="map" />
-          <div class="text-center">Custom<br />Content</div>
-        </div>
-      </template>
+  <q-btn-dropdown
+    split
+    color="primary"
+    push
+    no-caps
+    @click="onMainClick"
+    :style="style"
+  >
+    <template v-slot:label>
+      <div class="row items-center no-wrap">
+        <q-icon left :name="icon" />
+        <div class="text-center">{{ activeItem.title }}</div>
+      </div>
+    </template>
 
-      <q-list>
-        <q-item
-          v-for="item in listItems"
-          :key="item.id"
-          clickable
-          v-close-popup
-          @click="() => onItemClick(item)"
-        >
-          <q-item-section avatar>
-            <q-avatar icon="folder" color="primary" text-color="white" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ item.name }}</q-item-label>
-            <q-item-label caption>{{ item.date }}</q-item-label>
-          </q-item-section>
-          <q-item-section side>
-            <q-icon name="info" color="amber" />
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-btn-dropdown>
-  </div>
+    <q-list>
+      <q-item
+        v-for="item in listItems"
+        :key="item.id"
+        clickable
+        v-close-popup
+        @click="() => onItemClick(item)"
+      >
+        <q-item-section avatar>
+          <q-avatar icon="folder" color="primary" text-color="white" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ item.title }}</q-item-label>
+          <q-item-label caption>{{ item.caption }}</q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-icon name="info" color="amber" />
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </q-btn-dropdown>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
-// Define the type for list items
-interface ListItem {
-  id: number;
-  name: string;
-  date: string;
-}
+import { ListItem } from './helpers/DropdownList';
 
 const props = defineProps<{
   listItems: ListItem[];
+  icon: string;
+  onSelect: (listItem: ListItem) => void;
+  onModify: () => void;
+  activeItem: ListItem;
+  width?: string;
+  height?: string;
 }>();
+
+const style = `height: ${props.height}vh; width: ${props.width}vw;`;
 
 const onMainClick = () => {
   console.log('Clicked on main button');
+  props.onModify();
 };
 
 const onItemClick = (item: ListItem) => {
-  console.log('Click on an item', item);
+  if (item !== null) {
+    props.onSelect(item);
+  }
 };
 </script>

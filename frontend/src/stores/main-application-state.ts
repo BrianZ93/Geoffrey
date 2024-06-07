@@ -15,6 +15,7 @@ export const useAppStateStore = defineStore('app-state-store', {
     activePage: ActivePage.Dashboard,
     // Events Page States
     addEventDialogOpen: false,
+    modifyEventDialogOpen: false,
     addGuestDialogOpen: false,
   }),
   getters: {
