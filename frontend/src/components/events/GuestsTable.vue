@@ -10,6 +10,7 @@
       :filter="filter"
       binary-state-sort
       class="events-table"
+      dense
     >
       <!-- Search bar slot -->
       <template v-slot:top-right>
@@ -34,62 +35,43 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props" v-if="props.row">
-          <q-td key="id" :props="props">
-            {{ props.row.id }}
-          </q-td>
-          <q-td key="name" :props="props">
+          <q-td key="name" :props="props" align="left">
             {{ props.row.name }}
-            <q-popup-edit v-model="props.row.name" v-slot="scope">
-              <q-input
-                v-model="scope.value"
-                dense
-                autofocus
-                counter
-                @keyup.enter="scope.set"
-              />
+            <q-popup-edit
+              v-model="props.row.name"
+              @before-hide="updateGuest(props.row)"
+            >
+              <q-input v-model="props.row.name" dense autofocus counter />
             </q-popup-edit>
           </q-td>
-          <q-td key="email" :props="props">
+          <q-td key="email" :props="props" align="left">
             {{ props.row.email }}
-            <q-popup-edit v-model="props.row.email" v-slot="scope">
-              <q-input
-                v-model="scope.value"
-                dense
-                autofocus
-                counter
-                @keyup.enter="scope.set"
-              />
+            <q-popup-edit
+              v-model="props.row.email"
+              @before-hide="updateGuest(props.row)"
+            >
+              <q-input v-model="props.row.email" dense autofocus counter />
             </q-popup-edit>
           </q-td>
-          <q-td key="phoneNumber" :props="props">
+          <q-td key="phoneNumber" :props="props" align="left">
             {{ props.row.phoneNumber }}
-            <q-popup-edit v-model="props.row.phoneNumber" v-slot="scope">
+            <q-popup-edit
+              v-model="props.row.phoneNumber"
+              @before-hide="updateGuest(props.row)"
+            >
               <q-input
-                v-model="scope.value"
+                v-model="props.row.phoneNumber"
                 dense
                 autofocus
                 counter
-                @keyup.enter="scope.set"
               />
             </q-popup-edit>
           </q-td>
-          <q-td key="attending" :props="props">
+          <q-td key="attending" :props="props" align="left">
             {{ props.row.attending ? 'Yes' : 'No' }}
           </q-td>
-          <q-td key="rsvpReceived" :props="props">
+          <q-td key="rsvpReceived" :props="props" align="left">
             {{ props.row.rsvpReceived ? 'Yes' : 'No' }}
-          </q-td>
-          <q-td key="note" :props="props">
-            {{ props.row.note }}
-            <q-popup-edit v-model="props.row.note" v-slot="scope">
-              <q-input
-                v-model="scope.value"
-                dense
-                autofocus
-                counter
-                @keyup.enter="scope.set"
-              />
-            </q-popup-edit>
           </q-td>
         </q-tr>
         <q-tr v-if="rows.length === 0">
@@ -115,56 +97,48 @@ import { ref, computed } from 'vue';
 import { Guest } from 'src/models/events/guest';
 import { useEventsStore } from 'src/stores/events-state';
 import { useAppStateStore } from 'src/stores/main-application-state';
+import { modifyGuest } from './../../api/events/modify_guest';
+import { getEvents } from 'src/api/events/get_events';
 
 const appState = useAppStateStore();
-const eventStore = useEventsStore();
-const events = computed(() => eventStore.events);
+const eventsState = useEventsStore();
+const events = computed(() => eventsState.events);
 
 const columns = ref([
-  {
-    name: 'id',
-    required: true,
-    label: 'ID',
-    align: 'left' as const,
-    field: (row: Guest) => row.id,
-    format: (val: string) => `${val}`,
-    sortable: true,
-  },
   {
     name: 'name',
     label: 'Name',
     field: (row: Guest) => row.name,
     sortable: true,
+    align: 'left' as const,
   },
   {
     name: 'email',
     label: 'Email',
     field: (row: Guest) => row.email,
     sortable: true,
+    align: 'left' as const,
   },
   {
     name: 'phoneNumber',
     label: 'Phone Number',
     field: (row: Guest) => row.phoneNumber,
     sortable: true,
+    align: 'left' as const,
   },
   {
     name: 'attending',
     label: 'Attending',
     field: (row: Guest) => (row.attending ? 'Yes' : 'No'),
     sortable: true,
+    align: 'left' as const,
   },
   {
     name: 'rsvpReceived',
     label: 'RSVP Received',
     field: (row: Guest) => (row.rsvpReceived ? 'Yes' : 'No'),
     sortable: true,
-  },
-  {
-    name: 'note',
-    label: 'Note',
-    field: (row: Guest) => row.note,
-    sortable: true,
+    align: 'left' as const,
   },
 ]);
 
@@ -178,5 +152,17 @@ const rows = computed(() => {
 const handleOpenAddGuestDialog = () => {
   appState.addGuestDialogOpen = true;
   console.log('clicked');
+};
+
+const updateGuest = async (guest: Guest) => {
+  console.log(
+    `Guest ID: ${guest.id}, Name: ${guest.name}, Email: ${guest.email}, Phone Number: ${guest.phoneNumber}, Attending: ${guest.attending}, RSVP Received: ${guest.rsvpReceived}, Note: ${guest.note}`
+  );
+  await modifyGuest(eventsState.activeEvent.id, guest.id, guest);
+
+  const fetchedEvents = await getEvents();
+  if (typeof fetchedEvents !== 'string') {
+    eventsState.events = fetchedEvents;
+  }
 };
 </script>

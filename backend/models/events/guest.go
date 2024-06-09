@@ -5,7 +5,7 @@ type Guest struct {
 	EventId      string `json:"event_id"` // Foreign key to Event
 	Name         string `json:"name"`
 	Email        string `json:"email"`
-	PhoneNumber  string `json:"phone_number"`
+	PhoneNumber  string `json:"phoneNumber"`
 	Attending    bool   `json:"attending"`
 	RsvpReceived bool   `json:"rsvpreceived"`
 	Note         string `json:"note"`

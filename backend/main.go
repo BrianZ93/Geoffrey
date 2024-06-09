@@ -36,15 +36,18 @@ func main() {
 	}))
 
 	// Setup API Routes
-	// Event Routes
+	// Table Names
 	eventsTableName := "Events"
 	guestsTableName := "Events_Guests"
+
+	// Event Routes
 	e.POST("/create-event", eventroutes.CreateEvent(db, eventsTableName))
 	e.GET("/events", eventroutes.GetEvents(db, eventsTableName))
 	e.PUT("/events/:eventId", eventroutes.UpdateEvent(db, eventsTableName))
 
 	// Guests Routes
 	e.POST("/events/:eventId/guests", eventroutes.AddGuest(db, guestsTableName))
+	e.PUT("/events/:eventId/guests/:guestId", eventroutes.ModifyGuest(db, guestsTableName))
 
 	// Starting the backend server
 	logrus.Info("Starting server on port 8080...")
