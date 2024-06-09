@@ -35,7 +35,7 @@ import { ref, Ref } from 'vue';
 
 const props = defineProps<{
   label: string;
-  onUpdate: (date: string) => void;
+  onUpdate: (date: { from: string; to: string }) => void;
 }>();
 
 const model = ref({ from: '2024/06/02', to: '2024/06/05' });
@@ -45,15 +45,16 @@ const inputField: Ref<HTMLInputElement | null> = ref(null);
 
 const formatDateRange = (date: { from: string; to: string } | string) => {
   if (typeof date === 'string') {
-    return date;
+    return { from: date, to: date };
   } else {
-    return `${date.from} - ${date.to}`;
+    return date;
   }
 };
 
 const handleDateUpdate = (date: { from: string; to: string } | string) => {
-  inputValue.value = formatDateRange(date);
-  props.onUpdate(formatDateRange(date));
+  const formattedDate = formatDateRange(date);
+  inputValue.value = `${formattedDate.from} - ${formattedDate.to}`;
+  props.onUpdate(formattedDate);
   closeDatePicker();
 };
 

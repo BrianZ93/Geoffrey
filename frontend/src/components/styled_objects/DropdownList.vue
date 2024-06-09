@@ -6,6 +6,7 @@
     no-caps
     @click="onMainClick"
     :style="style"
+    glossy
   >
     <template v-slot:label>
       <div class="row items-center no-wrap">
