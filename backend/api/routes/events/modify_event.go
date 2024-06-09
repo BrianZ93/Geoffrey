@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
 func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
@@ -15,6 +16,9 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 		if err := c.Bind(&event); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request"})
 		}
+
+		// Log the received event to check date format
+		logrus.Infof("Received event: %+v", event)
 
 		// Check if the event exists
 		var eventExists bool
@@ -27,6 +31,8 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 		}
 
 		// Update the event details
+		logrus.Infof("Updating event: %+v", event)
+
 		_, err = db.Exec(fmt.Sprintf("UPDATE %s SET Title = ?, StartTime = ?, EndTime = ? WHERE Id = ?", tableName),
 			event.Title, event.StartTime, event.EndTime, event.Id)
 		if err != nil {
@@ -56,6 +62,8 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 				}
 			}
 		}
+
+		logrus.Infof("Event updated successfully: %+v", event)
 
 		return c.JSON(http.StatusOK, map[string]string{"message": "Event updated successfully"})
 	}

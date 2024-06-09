@@ -27,7 +27,11 @@
         </q-card-section>
       </q-card-section>
 
-      <form-actions :onSubmit="onSubmit" :onCancel="handleCancel" />
+      <form-actions
+        :onSubmit="onSubmit"
+        submit-text="submit"
+        :onCancel="handleCancel"
+      />
     </q-card>
   </q-dialog>
 </template>

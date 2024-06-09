@@ -7,6 +7,7 @@
     @click="onMainClick"
     :style="style"
     glossy
+    :disable-main-btn="activeItem.title === ''"
   >
     <template v-slot:label>
       <div class="row items-center no-wrap">

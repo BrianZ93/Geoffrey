@@ -5,6 +5,7 @@ import { Event } from 'src/models/events/event';
 const serverConfig = getServerConfig();
 
 export const updateEvent = async (event: Event): Promise<void> => {
+  console.log(event);
   try {
     const response = await axios.put(
       `${serverConfig.api_url}/events/${event.id}`,

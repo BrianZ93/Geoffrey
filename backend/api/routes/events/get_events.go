@@ -75,10 +75,11 @@ func GetEvents(db *sql.DB, tableName string) echo.HandlerFunc {
 		exists, err := api.TableExists(db, tableName)
 		if err != nil {
 			logrus.Errorf("error: %v %v", http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 
 		if !exists {
-			returnMessage := "No such table exists" + tableName
+			returnMessage := "No such table exists: " + tableName
 			return c.JSON(http.StatusOK, returnMessage)
 		}
 

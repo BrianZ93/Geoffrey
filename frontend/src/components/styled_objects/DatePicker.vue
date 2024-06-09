@@ -36,10 +36,17 @@ import { ref, Ref } from 'vue';
 const props = defineProps<{
   label: string;
   onUpdate: (date: { from: string; to: string }) => void;
+  initialDate?: { from: string; to: string };
 }>();
 
 const model = ref({ from: '2024/06/02', to: '2024/06/05' });
 const inputValue = ref('');
+
+if (props.initialDate !== undefined) {
+  model.value = { from: props.initialDate.from, to: props.initialDate.to };
+  inputValue.value = `${model.value.from} ${model.value.to}`;
+}
+
 const showDatePicker = ref(false);
 const inputField: Ref<HTMLInputElement | null> = ref(null);
 

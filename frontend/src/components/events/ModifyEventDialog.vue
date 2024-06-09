@@ -24,7 +24,11 @@
             :initialValue="activeEvent.title"
           />
           <!-- Event Date -->
-          <date-picker label="Event Date" :onUpdate="handleDateUpdate" />
+          <date-picker
+            label="Event Date"
+            :onUpdate="handleDateUpdate"
+            :initial-date="initialDateValue"
+          />
         </q-card-section>
       </q-card-section>
 
@@ -57,6 +61,10 @@ const activeEvent = eventsState.activeEvent as Event;
 const eventTitle = ref<string | null>(activeEvent.title);
 const startDate = ref<string | null>(activeEvent.startTime);
 const endDate = ref<string | null>(activeEvent.endTime);
+
+const initialDateValue = computed(() => {
+  return { from: activeEvent.startTime, to: activeEvent.endTime };
+});
 
 const handleEventNameChange = (value: string | null) => {
   handleOnValueChange(value, eventTitle);

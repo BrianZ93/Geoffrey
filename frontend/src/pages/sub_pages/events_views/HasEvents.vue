@@ -33,7 +33,9 @@
       <div class="event-boxes-container">
         <div class="event-box" v-for="box in boxes" :key="box.caption">
           <q-icon :name="box.icon" size="64px" />
-          <div class="big-number">{{ box.number }}</div>
+          <div class="big-number">
+            {{ box.number }}
+          </div>
           <div class="caption">{{ box.caption }}</div>
         </div>
       </div>
@@ -72,11 +74,23 @@ const events = computed(() => {
   return listItems;
 });
 
+if (eventsState.events.length > 0) {
+  eventsState.activeEvent = eventsState.events[0];
+}
+
 const boxes = ref([
-  { icon: 'schedule_send', number: 10, caption: 'Remaining RSVPs' },
-  { icon: 'group', number: 50, caption: 'Confirmed Guests' },
-  { icon: 'location_on', number: 2, caption: 'Venues' },
-  { icon: 'schedule', number: 20, caption: 'Days Until Event' },
+  {
+    icon: 'schedule_send',
+    number: 0,
+    caption: 'Remaining RSVPs',
+  },
+  { icon: 'group', number: 0, caption: 'Confirmed Guests' },
+  { icon: 'location_on', number: 0, caption: 'Venues' },
+  {
+    icon: 'schedule',
+    number: 0,
+    caption: 'Days Until Event',
+  },
 ]);
 
 const handleCreateEventDialogOpen = () => {
