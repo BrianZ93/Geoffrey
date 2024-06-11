@@ -7,6 +7,6 @@ type Guest struct {
 	Email        string `json:"email"`
 	PhoneNumber  string `json:"phoneNumber"`
 	Attending    bool   `json:"attending"`
-	RsvpReceived bool   `json:"rsvpreceived"`
+	RsvpReceived bool   `json:"rsvpReceived"`
 	Note         string `json:"note"`
 }
