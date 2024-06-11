@@ -12,7 +12,7 @@ import (
 )
 
 func fetchGuestsByEventID(db *sql.DB, eventID string) ([]models.Guest, error) {
-	rows, err := db.Query("SELECT Id, EventId, Name, Email, PhoneNumber, Attending, Note FROM Events_Guests WHERE EventId = ?", eventID)
+	rows, err := db.Query("SELECT Id, EventId, Name, Email, PhoneNumber, Attending, RsvpReceived, Note FROM Events_Guests WHERE EventId = ?", eventID)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func fetchGuestsByEventID(db *sql.DB, eventID string) ([]models.Guest, error) {
 	var guests []models.Guest
 	for rows.Next() {
 		var guest models.Guest
-		if err := rows.Scan(&guest.Id, &guest.EventId, &guest.Name, &guest.Email, &guest.PhoneNumber, &guest.Attending, &guest.Note); err != nil {
+		if err := rows.Scan(&guest.Id, &guest.EventId, &guest.Name, &guest.Email, &guest.PhoneNumber, &guest.Attending, &guest.RsvpReceived, &guest.Note); err != nil {
 			return nil, err
 		}
 		guests = append(guests, guest)

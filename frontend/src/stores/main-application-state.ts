@@ -18,6 +18,8 @@ export const useAppStateStore = defineStore('app-state-store', {
     addEventDialogOpen: false,
     modifyEventDialogOpen: false,
     addGuestDialogOpen: false,
+    // Finances Page States
+    addPortfolioDialogOpen: false,
   }),
   getters: {
     ActivePage: (state) => state.activePage,

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
 func ModifyGuest(db *sql.DB, tableName string) echo.HandlerFunc {
@@ -25,6 +26,17 @@ func ModifyGuest(db *sql.DB, tableName string) echo.HandlerFunc {
 		if err := c.Bind(&guest); err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request"})
 		}
+
+		logrus.WithFields(logrus.Fields{
+			"Name":         guest.Name,
+			"Email":        guest.Email,
+			"PhoneNumber":  guest.PhoneNumber,
+			"Attending":    guest.Attending,
+			"RsvpReceived": guest.RsvpReceived,
+			"Note":         guest.Note,
+			"GuestId":      guestId,
+			"EventId":      eventId,
+		}).Info("Updating guest details")
 
 		exists, err := api.TableExists(db, tableName)
 		if err != nil {

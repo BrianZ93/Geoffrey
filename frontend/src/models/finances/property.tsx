@@ -2,7 +2,9 @@ import { Mortgage } from './debt';
 
 export enum PropertyUse {
   Residential = 0,
-  Investment = 0,
+  Investment = 1,
+  SecondHome = 2,
+  VacationHome = 3,
 }
 
 export enum PropertyType {
@@ -11,6 +13,7 @@ export enum PropertyType {
   Condo = 2,
   MultiUnit = 3,
   Commercial = 4,
+  Land = 5,
 }
 
 export enum LeaseType {

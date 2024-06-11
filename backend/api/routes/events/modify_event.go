@@ -43,8 +43,22 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 		if event.Guests != nil && len(event.Guests) > 0 {
 			for _, guest := range event.Guests {
 				guest.EventId = event.Id // Ensure the foreign key is set
-				_, err = db.Exec("REPLACE INTO Events_Guests (EventId, Id, Name, Email, PhoneNumber, Attending, RsvpReceived, Note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-					guest.EventId, guest.Id, guest.Name, guest.Email, guest.PhoneNumber, guest.Attending, guest.RsvpReceived, guest.Note)
+
+				// Check if the guest exists
+				var guestExists bool
+				err = db.QueryRow("SELECT EXISTS (SELECT 1 FROM Events_Guests WHERE Id = ?)", guest.Id).Scan(&guestExists)
+				if err != nil {
+					return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+				}
+
+				if guestExists {
+					_, err = db.Exec("UPDATE Events_Guests SET Name = ?, Email = ?, PhoneNumber = ?, Attending = ?, RsvpReceived = ?, Note = ? WHERE Id = ?",
+						guest.Name, guest.Email, guest.PhoneNumber, guest.Attending, guest.RsvpReceived, guest.Note, guest.Id)
+				} else {
+					_, err = db.Exec("INSERT INTO Events_Guests (EventId, Id, Name, Email, PhoneNumber, Attending, RsvpReceived, Note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+						guest.EventId, guest.Id, guest.Name, guest.Email, guest.PhoneNumber, guest.Attending, guest.RsvpReceived, guest.Note)
+				}
+
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 				}
@@ -55,8 +69,22 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 		if event.Venues != nil && len(event.Venues) > 0 {
 			for _, venue := range event.Venues {
 				venue.EventId = event.Id // Ensure the foreign key is set
-				_, err = db.Exec("REPLACE INTO Events_Venues (EventId, Id, Title, Address, StartTime, EndTime) VALUES (?, ?, ?, ?, ?, ?)",
-					venue.EventId, venue.Id, venue.Title, venue.Address, venue.StartTime, venue.EndTime)
+
+				// Check if the venue exists
+				var venueExists bool
+				err = db.QueryRow("SELECT EXISTS (SELECT 1 FROM Events_Venues WHERE Id = ?)", venue.Id).Scan(&venueExists)
+				if err != nil {
+					return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+				}
+
+				if venueExists {
+					_, err = db.Exec("UPDATE Events_Venues SET Title = ?, Address = ?, StartTime = ?, EndTime = ? WHERE Id = ?",
+						venue.Title, venue.Address, venue.StartTime, venue.EndTime, venue.Id)
+				} else {
+					_, err = db.Exec("INSERT INTO Events_Venues (EventId, Id, Title, Address, StartTime, EndTime) VALUES (?, ?, ?, ?, ?, ?)",
+						venue.EventId, venue.Id, venue.Title, venue.Address, venue.StartTime, venue.EndTime)
+				}
+
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 				}

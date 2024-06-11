@@ -4,7 +4,7 @@
     <modify-events-dialog v-if="appState.modifyEventDialogOpen" />
     <add-guest-dialog v-if="appState.addGuestDialogOpen" />
 
-    <div class="row section events-header-row">
+    <div class="row section header-row">
       <!-- First row content -->
       <q-toolbar class="bg-secondary">
         <drop-down-list
@@ -59,10 +59,14 @@ import { ListItem } from 'src/components/styled_objects/helpers/DropdownList';
 
 import AddGuestDialog from '../../../components/events/AddGuestDialog.vue';
 import { useAppStateStore } from 'src/stores/main-application-state';
-// import { Guest } from 'src/models/events/guest';
 
 const appState = useAppStateStore();
 const eventsState = useEventsStore();
+
+const remainingRSVPs = ref<number>(0);
+const confirmedGuests = ref<number>(0);
+const venues = ref<number>(0);
+const daysUntilEvent = ref<number>(0);
 
 const events = computed(() => {
   let listItems = [] as ListItem[];
@@ -81,14 +85,14 @@ if (eventsState.events.length > 0) {
 const boxes = ref([
   {
     icon: 'schedule_send',
-    number: 0,
+    number: remainingRSVPs.value,
     caption: 'Remaining RSVPs',
   },
-  { icon: 'group', number: 0, caption: 'Confirmed Guests' },
-  { icon: 'location_on', number: 0, caption: 'Venues' },
+  { icon: 'group', number: confirmedGuests.value, caption: 'Confirmed Guests' },
+  { icon: 'location_on', number: venues.value, caption: 'Venues' },
   {
     icon: 'schedule',
-    number: 0,
+    number: daysUntilEvent.value,
     caption: 'Days Until Event',
   },
 ]);
@@ -102,26 +106,64 @@ const handleOpenModifyEventDialog = () => {
 };
 
 const calculateEventValues = (selectedEvent: Event) => {
-  let remainingRsvps = 0;
-  let confirmedGuests = 0;
-  // let venues = selectedEvent.venues ? selectedEvent.venues.length : 0;
-  // let daysUntilEvent = 0;
+  let remainingRsvpsValue = 0;
+  let confirmedGuestsValue = 0;
+
+  const eventDate = new Date(selectedEvent.startTime);
+  const currentDate = new Date();
+
+  // Calculate the difference in time (in milliseconds)
+  const timeDifference = eventDate.getTime() - currentDate.getTime();
+
+  daysUntilEvent.value = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  let daysUntilEventText = '';
+
+  if (daysUntilEvent.value === 0) {
+    daysUntilEventText = 'The Day is Here!';
+  } else if (daysUntilEvent.value < 0) {
+    daysUntilEventText = 'The Event Date Has Passed';
+  }
+
   // Calculate guest data
   if (selectedEvent.guests) {
     for (let guest of selectedEvent.guests) {
       if (guest.attending) {
-        confirmedGuests += 1;
+        confirmedGuestsValue += 1;
       }
 
       if (!guest.rsvpReceived) {
-        remainingRsvps += 1;
+        remainingRsvpsValue += 1;
       }
     }
   }
 
-  console.log(selectedEvent.startTime);
-  console.log(confirmedGuests, remainingRsvps);
+  remainingRSVPs.value = remainingRsvpsValue;
+  confirmedGuests.value = confirmedGuestsValue;
+
+  // Update boxes without re-wrapping in ref
+  boxes.value = [
+    {
+      icon: 'schedule_send',
+      number: remainingRSVPs.value,
+      caption: 'Remaining RSVPs',
+    },
+    {
+      icon: 'group',
+      number: confirmedGuests.value,
+      caption: 'Confirmed Guests',
+    },
+    { icon: 'location_on', number: venues.value, caption: 'Venues' },
+    {
+      icon: 'schedule',
+      number: daysUntilEvent.value,
+      caption: daysUntilEventText,
+    },
+  ];
 };
+
+if (eventsState.activeEvent) {
+  calculateEventValues(eventsState.activeEvent);
+}
 
 const handleSelectEvent = (val: ListItem) => {
   const selectedEventId = val.id;

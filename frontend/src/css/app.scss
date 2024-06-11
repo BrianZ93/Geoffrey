@@ -84,6 +84,23 @@
   color: white;
 }
 
+.update-boolean-button {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.update-boolean-header {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.header-row {
+  display: flex;
+  height: 8vh;
+}
+
 // Loading Page
 .loading-text {
   opacity: 85%;
@@ -91,11 +108,6 @@
 }
 
 // Events Page Specific CSS classes
-
-.events-header-row {
-  display: flex;
-  height: 8vh;
-}
 
 .events-main-content-row {
   display: flex;
@@ -152,6 +164,108 @@
   background-color: $secondary;
 }
 
+// Finances Specific Classes
+.finances-main-content-row {
+  display: flex;
+  height: 78vh;
+  width: 100%;
+}
+
+.finances-boxes-container {
+  display: flex;
+  flex-direction: row;
+  height: 20vh;
+}
+
+.finances-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 15vw;
+  height: 100%;
+  background-color: $secondary;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: transform 0.3s;
+  margin-left: 1vw;
+}
+
+.finances-box:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.big-number {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.caption {
+  font-size: 16px;
+  color: #777;
+  margin-top: 4px;
+}
+
+.finances-table-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.finances-table {
+  height: 50vh;
+  width: 70vw;
+  background-color: $secondary;
+}
+
+.finances-overview-top-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 0.5vh;
+}
+
+.finances-overview-properties-container {
+  height: 40vh;
+  width: 39vw;
+  background-color: $secondary;
+  margin-right: 0.5vw;
+}
+
+.finances-overview-equities-container {
+  height: 40vh;
+  width: 36vw;
+  background-color: $secondary;
+}
+
+.finances-overview-bottom-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 0.5vh;
+}
+
+.finances-overview-bottom-container-one {
+  height: 38vh;
+  width: 24.5vw;
+  background-color: $secondary;
+  margin-right: 0.5vw;
+}
+
+.finances-overview-bottom-container-two {
+  height: 38vh;
+  width: 25vw;
+  background-color: $secondary;
+  margin-right: 0.5vw;
+}
+
+.finances-overview-bottom-container-three {
+  height: 38vh;
+  width: 25vw;
+  background-color: $secondary;
+}
 // SCROLL BARS
 /* Style for the entire scrollbar */
 ::-webkit-scrollbar {

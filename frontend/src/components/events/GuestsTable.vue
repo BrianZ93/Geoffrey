@@ -7,6 +7,14 @@
       modelValue="delete_guest"
     />
 
+    <boolean-radio-box
+      v-if="rsvpUpdateRadioVisible"
+      :headerLabel="activeGuestName"
+      trueLabel="Attending"
+      falseLabel="Regrets"
+      :onSubmit="(state: boolean) => updateAttending(state, activeGuest)"
+    />
+
     <q-table
       flat
       bordered
@@ -74,7 +82,12 @@
               />
             </q-popup-edit>
           </q-td>
-          <q-td key="attending" :props="props" align="left">
+          <q-td
+            key="attending"
+            :props="props"
+            align="left"
+            @click="handleUpdateRSVPDialog(props.row)"
+          >
             {{ props.row.attending ? 'Yes' : 'No' }}
           </q-td>
           <q-td key="rsvpReceived" :props="props" align="left">
@@ -85,8 +98,8 @@
               flat
               dense
               round
-              icon="delete"
-              color="red"
+              icon="delete_forever"
+              color="white"
               @click="openConfirmDeleteGuestDialog(props.row)"
             />
           </q-td>
@@ -111,7 +124,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Notify } from 'quasar';
+import { Notify, QPopupEdit } from 'quasar';
 import { Guest } from 'src/models/events/guest';
 import { Event } from 'src/models/events/event';
 import { useEventsStore } from 'src/stores/events-state';
@@ -120,6 +133,7 @@ import { modifyGuest } from './../../api/events/modify_guest';
 import { deleteGuest } from 'src/api/events/delete_guest';
 import { getEvents } from 'src/api/events/get_events';
 import ConfirmationDialog from '../styled_objects/ConfirmationDialog.vue';
+import BooleanRadioBox from '../styled_objects/BooleanRadioBox.vue';
 
 const appState = useAppStateStore();
 const eventsState = useEventsStore();
@@ -178,19 +192,12 @@ const rows = computed(() => {
 
 const handleOpenAddGuestDialog = () => {
   appState.addGuestDialogOpen = true;
-  console.log('clicked');
 };
 
 const updateGuest = async (guest: Guest) => {
-  console.log(
-    `Guest ID: ${guest.id}, Name: ${guest.name}, Email: ${guest.email}, Phone Number: ${guest.phoneNumber}, Attending: ${guest.attending}, RSVP Received: ${guest.rsvpReceived}, Note: ${guest.note}`
-  );
   await modifyGuest(eventsState.activeEvent.id, guest.id, guest);
 
-  const fetchedEvents = await getEvents();
-  if (typeof fetchedEvents !== 'string') {
-    eventsState.events = fetchedEvents;
-  }
+  getEvents();
 };
 
 const confirmationDialogmodelValue = 'delete_guest';
@@ -221,6 +228,32 @@ const confirmDeleteGuest = async () => {
       icon: 'cloud_done',
       message: 'Guest Removed',
     });
+
+    const fetchedEvents = await getEvents();
+    if (typeof fetchedEvents !== 'string') {
+      eventsState.events = fetchedEvents;
+    }
+  }
+};
+
+// RSVP Related Variables
+const activeGuestName = ref<string>('');
+const activeGuest = ref<Guest | null>(null);
+
+const rsvpUpdateRadioVisible = ref<boolean>(false);
+
+const handleUpdateRSVPDialog = (guest: Guest) => {
+  activeGuest.value = guest;
+  activeGuestName.value = guest.name;
+  rsvpUpdateRadioVisible.value = true;
+};
+
+const updateAttending = async (state: boolean, guest: Guest | null) => {
+  rsvpUpdateRadioVisible.value = false;
+  if (guest) {
+    guest.attending = state;
+    guest.rsvpReceived = true;
+    await modifyGuest(eventsState.activeEvent.id, guest.id, guest);
 
     const fetchedEvents = await getEvents();
     if (typeof fetchedEvents !== 'string') {
