@@ -1,5 +1,12 @@
 <template>
   <div class="q-pa-md">
+    <confirmation-dialog
+      :cancel="cancelDeleteGuest"
+      :confirm="confirmDeleteGuest"
+      :message="confirmationDialogString"
+      modelValue="delete_guest"
+    />
+
     <q-table
       flat
       bordered
@@ -73,6 +80,16 @@
           <q-td key="rsvpReceived" :props="props" align="left">
             {{ props.row.rsvpReceived ? 'Yes' : 'No' }}
           </q-td>
+          <q-td key="delete" :props="props" align="center">
+            <q-btn
+              flat
+              dense
+              round
+              icon="delete"
+              color="red"
+              @click="openConfirmDeleteGuestDialog(props.row)"
+            />
+          </q-td>
         </q-tr>
         <q-tr v-if="rows.length === 0">
           <q-td colspan="100%" class="text-center"> No guests available </q-td>
@@ -94,11 +111,15 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { Notify } from 'quasar';
 import { Guest } from 'src/models/events/guest';
+import { Event } from 'src/models/events/event';
 import { useEventsStore } from 'src/stores/events-state';
 import { useAppStateStore } from 'src/stores/main-application-state';
 import { modifyGuest } from './../../api/events/modify_guest';
+import { deleteGuest } from 'src/api/events/delete_guest';
 import { getEvents } from 'src/api/events/get_events';
+import ConfirmationDialog from '../styled_objects/ConfirmationDialog.vue';
 
 const appState = useAppStateStore();
 const eventsState = useEventsStore();
@@ -140,13 +161,19 @@ const columns = ref([
     sortable: true,
     align: 'left' as const,
   },
+  {
+    name: 'delete',
+    label: '',
+    field: 'delete',
+    align: 'center' as const,
+  },
 ]);
 
 const filter = ref('');
 
 const rows = computed(() => {
   // Extract guests from events and handle cases where there are no guests
-  return events.value.flatMap((event) => event.guests || []);
+  return events.value.flatMap((event: Event) => event.guests || []);
 });
 
 const handleOpenAddGuestDialog = () => {
@@ -163,6 +190,42 @@ const updateGuest = async (guest: Guest) => {
   const fetchedEvents = await getEvents();
   if (typeof fetchedEvents !== 'string') {
     eventsState.events = fetchedEvents;
+  }
+};
+
+const confirmationDialogmodelValue = 'delete_guest';
+const confirmationDialogString = ref<string>('deleting guest: ');
+const confirmationDialogGuest = ref<Guest | null>(null);
+
+const openConfirmDeleteGuestDialog = (guest: Guest) => {
+  confirmationDialogString.value = 'delete ' + guest.name;
+  confirmationDialogGuest.value = guest;
+  appState.confirmationDialogOpen[confirmationDialogmodelValue] = true;
+};
+
+const cancelDeleteGuest = () => {
+  appState.confirmationDialogOpen[confirmationDialogmodelValue] = false;
+};
+
+const confirmDeleteGuest = async () => {
+  if (confirmationDialogGuest.value !== null) {
+    await deleteGuest(
+      eventsState.activeEvent.id,
+      confirmationDialogGuest.value.id
+    );
+    appState.confirmationDialogOpen[confirmationDialogmodelValue] = false;
+
+    Notify.create({
+      color: 'green-4',
+      textColor: 'white',
+      icon: 'cloud_done',
+      message: 'Guest Removed',
+    });
+
+    const fetchedEvents = await getEvents();
+    if (typeof fetchedEvents !== 'string') {
+      eventsState.events = fetchedEvents;
+    }
   }
 };
 </script>

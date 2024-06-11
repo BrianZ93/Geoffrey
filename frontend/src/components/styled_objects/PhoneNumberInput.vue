@@ -1,11 +1,15 @@
 <template>
   <q-input
     v-model="inputValue"
+    type="tel"
     :label="label"
     @update:model-value="updateInputValue"
     clearable
     outlined
     class="form-input-container"
+    mask="(###) ###-####"
+    :rules="[phoneRule]"
+    lazyRules
   />
 </template>
 
@@ -30,5 +34,11 @@ const updateInputValue = (value: string | number | null) => {
   } else {
     props.onValueChange(value);
   }
+};
+
+const phoneRule = (val: string) => {
+  // Remove all non-numeric characters
+  const numericVal = val.replace(/\D/g, '');
+  return numericVal.length === 10 || 'Phone number must be 10 digits long';
 };
 </script>

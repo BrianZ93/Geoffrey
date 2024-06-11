@@ -5,7 +5,10 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card class="bg-secondary text-white" style="width: 50vw; height: 50vh">
+    <q-card
+      class="bg-secondary text-white dialog-card-layout"
+      style="width: 70vw; height: 70vh"
+    >
       <q-card-section>
         <q-card-section>
           <div class="text-h6 text-center">Add a New Guest</div>
@@ -15,18 +18,33 @@
 
         <q-card-section class="q-pt-none">
           <!-- Guest Name -->
-          <q-input v-model="guestName" label="Guest Name" />
+          <string-input
+            label="Guest Name"
+            :onValueChange="handleGuestNameChange"
+          />
           <!-- Phone Number -->
-          <q-input v-model="phoneNumber" type="tel" label="Telephone number" />
+          <phone-number-input
+            label="Phone Number"
+            :onValueChange="handlePhoneNumberChange"
+          />
           <!-- Email Address -->
-          <q-input v-model="email" type="email" label="Email" />
+          <email-input label="Guest Email" :onValueChange="handleEmailChange" />
+
+          <q-btn
+            label="Import Guests from File"
+            @click="importGuestsFromFile"
+            color="primary"
+            glossy
+            disable
+          />
         </q-card-section>
       </q-card-section>
 
-      <q-card-actions align="right" class="bg-primary text-teal">
-        <q-btn flat label="Add Guest" @click="onSubmit" />
-        <q-btn flat label="Cancel" @click="handleCancel" />
-      </q-card-actions>
+      <form-actions
+        :on-submit="onSubmit"
+        submit-text="Add Guest"
+        :onCancel="handleCancel"
+      />
     </q-card>
   </q-dialog>
 </template>
@@ -37,9 +55,16 @@ import { ref, computed } from 'vue';
 import { useAppStateStore } from '../../stores/main-application-state';
 import { useEventsStore, EventsLoadState } from '../../stores/events-state';
 import { Guest } from '../../models/events/guest';
+import FormActions from '../styled_objects/FormActions.vue';
+import StringInput from '../styled_objects/StringInput.vue';
+import { handleOnValueChange } from '../../components/styled_objects/helpers/StringInput';
+import PhoneNumberInput from '../styled_objects/PhoneNumberInput.vue';
+import { handleOnPhoneNumberValueChange } from '../../components/styled_objects/helpers/PhoneNumberInput';
+import EmailInput from '../styled_objects/EmailInput.vue';
 
 import { addGuest } from '../../api/events/add_guest';
 import { getEvents } from '../../api/events/get_events';
+import { guests } from '../../data/guests';
 
 const appState = useAppStateStore();
 const eventsState = useEventsStore();
@@ -113,5 +138,23 @@ const onSubmit = async () => {
 
 const handleCancel = () => {
   appState.addGuestDialogOpen = false;
+};
+
+const handleGuestNameChange = (value: string | null) => {
+  handleOnValueChange(value, guestName);
+};
+
+const handlePhoneNumberChange = (value: string | null) => {
+  handleOnPhoneNumberValueChange(value, phoneNumber);
+};
+
+const handleEmailChange = (value: string | null) => {
+  handleOnValueChange(value, email);
+};
+
+const importGuestsFromFile = async () => {
+  for (let guest of guests) {
+    await addGuest(eventsState.activeEvent.id, guest);
+  }
 };
 </script>

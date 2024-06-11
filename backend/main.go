@@ -44,6 +44,7 @@ func main() {
 	e.POST("/create-event", eventroutes.CreateEvent(db, eventsTableName))
 	e.GET("/events", eventroutes.GetEvents(db, eventsTableName))
 	e.PUT("/events/:eventId", eventroutes.UpdateEvent(db, eventsTableName))
+	e.DELETE("/events/:eventId/guests/:guestId", eventroutes.DeleteGuest(db, eventsTableName))
 
 	// Guests Routes
 	e.POST("/events/:eventId/guests", eventroutes.AddGuest(db, guestsTableName))

@@ -6,7 +6,7 @@ services:
     volumes:
       - ./frontend:/app
     network_mode: host
-    command: yarn quasar dev
+    command: npm run dev
 
   backend:
     build:

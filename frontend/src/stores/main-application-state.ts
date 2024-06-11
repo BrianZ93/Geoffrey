@@ -13,6 +13,7 @@ export const useAppStateStore = defineStore('app-state-store', {
     // Main Page States
     sidemenuOpen: false,
     activePage: ActivePage.Dashboard,
+    confirmationDialogOpen: { delete_guest: false } as Record<string, boolean>,
     // Events Page States
     addEventDialogOpen: false,
     modifyEventDialogOpen: false,

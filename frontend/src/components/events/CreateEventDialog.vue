@@ -148,4 +148,4 @@ const handleCancel = () => {
   appState.addEventDialogOpen = false;
 };
 </script>
-../../api/events/create_event
+../../api/events/create_event ../styled_objects/helpers/Input

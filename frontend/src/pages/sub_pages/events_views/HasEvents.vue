@@ -126,7 +126,7 @@ const calculateEventValues = (selectedEvent: Event) => {
 const handleSelectEvent = (val: ListItem) => {
   const selectedEventId = val.id;
   const selectedEvent = eventsState.events.find(
-    (event) => event.id === selectedEventId
+    (event: Event) => event.id === selectedEventId
   );
   if (selectedEvent) {
     eventsState.activeEvent = selectedEvent;

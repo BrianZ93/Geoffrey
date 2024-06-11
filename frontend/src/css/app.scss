@@ -49,7 +49,7 @@
   margin-top: 1vh;
 }
 
-.string-input-container {
+.form-input-container {
   margin-top: 1vh;
 }
 
@@ -150,4 +150,29 @@
   height: 50vh;
   width: 70vw;
   background-color: $secondary;
+}
+
+// SCROLL BARS
+/* Style for the entire scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* Style for the scrollbar track */
+::-webkit-scrollbar-track {
+  background: #968d8d; /* Customize this color */
+  border-radius: 10px;
+}
+
+/* Style for the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
+}
+
+/* Style for the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #252525; /* Customize this color */
 }

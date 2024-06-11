@@ -1,7 +1,10 @@
 <template>
   <q-input
     v-model="inputValue"
+    type="email"
     :label="label"
+    :rules="[emailRule]"
+    lazyRules
     @update:model-value="updateInputValue"
     clearable
     outlined
@@ -30,5 +33,10 @@ const updateInputValue = (value: string | number | null) => {
   } else {
     props.onValueChange(value);
   }
+};
+
+const emailRule = (val: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(val) || 'Invalid email address';
 };
 </script>
