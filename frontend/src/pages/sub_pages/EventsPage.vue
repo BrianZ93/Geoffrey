@@ -20,28 +20,40 @@ import LoadingPage from './LoadingPage.vue';
 import { getEvents } from '../../api/events/get_events';
 import { useEventsStore, EventsLoadState } from '../../stores/events-state';
 
-const eventsStore = useEventsStore();
-const loadState = computed(() => eventsStore.loadState);
+const eventsState = useEventsStore();
+const loadState = computed(() => eventsState.loadState);
 
-onMounted(async () => {
+const attemptToRetrieveEvents = async () => {
   try {
     const fetchedEvents = await getEvents();
 
     if (typeof fetchedEvents === 'string') {
-      eventsStore.loadState = EventsLoadState.hasNoEvents;
+      eventsState.loadState = EventsLoadState.hasNoEvents;
       return;
     } else {
-      eventsStore.events = fetchedEvents;
+      eventsState.events = fetchedEvents;
     }
 
     if (fetchedEvents.length > 0) {
-      eventsStore.loadState = EventsLoadState.hasEvents;
+      eventsState.loadState = EventsLoadState.hasEvents;
     } else {
-      eventsStore.loadState = EventsLoadState.hasNoEvents;
+      eventsState.loadState = EventsLoadState.hasNoEvents;
     }
   } catch (error) {
     console.error('Failed to fetch events:', error);
   }
+};
+
+onMounted(() => {
+  const intervalId = setInterval(async () => {
+    await attemptToRetrieveEvents();
+    if (eventsState.loadState !== EventsLoadState.loading) {
+      clearInterval(intervalId);
+    }
+  }, 5000);
+
+  // Optional: Immediately attempt to retrieve events on mount
+  attemptToRetrieveEvents();
 });
 </script>
 
