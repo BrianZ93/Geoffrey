@@ -63,14 +63,14 @@ func main() {
 	aws.SyncEventsFromSqLite3ToDynamoDB(db, dynamoClient, eventsTableName, guestsTableName, venuesTableName)
 
 	// Event Routes
-	e.POST("/create-event", eventroutes.CreateEvent(db, eventsTableName))
+	e.POST("/create-event", eventroutes.CreateEvent(db, eventsTableName, dynamoClient))
 	e.GET("/events", eventroutes.GetEventsHandler(db, eventsTableName))
-	e.PUT("/events/:eventId", eventroutes.UpdateEvent(db, eventsTableName))
+	e.PUT("/events/:eventId", eventroutes.UpdateEvent(db, eventsTableName, dynamoClient))
 
 	// Guests Routes
-	e.POST("/events/:eventId/guests", eventroutes.AddGuest(db, guestsTableName))
-	e.PUT("/events/:eventId/guests/:guestId", eventroutes.ModifyGuest(db, guestsTableName))
-	e.DELETE("/events/:eventId/guests/:guestId", eventroutes.DeleteGuest(db, eventsTableName))
+	e.POST("/events/:eventId/guests", eventroutes.AddGuest(db, guestsTableName, dynamoClient))
+	e.PUT("/events/:eventId/guests/:guestId", eventroutes.ModifyGuest(db, guestsTableName, dynamoClient))
+	e.DELETE("/events/:eventId/guests/:guestId", eventroutes.DeleteGuest(db, eventsTableName, dynamoClient))
 
 	// Starting the backend server
 	logrus.Info("Starting server on port 8080...")

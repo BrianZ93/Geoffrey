@@ -1,4 +1,4 @@
-package sync
+package types
 
 import (
 	routes "backend/api/routes/events"
@@ -15,7 +15,7 @@ import (
 )
 
 // CheckGuestExists checks if a guest exists in the DynamoDB table
-func CheckGuestExists(svc *dynamodb.Client, guestID string, guestsTableName string) (bool, error) {
+func CheckGuestExists(dynamoClient *dynamodb.Client, guestID string, guestsTableName string) (bool, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(guestsTableName),
 		Key: map[string]types.AttributeValue{
@@ -23,7 +23,7 @@ func CheckGuestExists(svc *dynamodb.Client, guestID string, guestsTableName stri
 		},
 	}
 
-	result, err := svc.GetItem(context.TODO(), input)
+	result, err := dynamoClient.GetItem(context.TODO(), input)
 	if err != nil {
 		return false, err
 	}
@@ -72,7 +72,7 @@ func CompareEventDetails(db *sql.DB, svc *dynamodb.Client, eventID string, guest
 }
 
 // WriteEventToDynamoDB writes the given event to the DynamoDB table
-func WriteEventToDynamoDB(svc *dynamodb.Client, event models.Event, eventsTableName string) error {
+func WriteEventToDynamoDB(dynamoClient *dynamodb.Client, event models.Event, eventsTableName string) error {
 	// Marshal the event into a map of DynamoDB attribute values
 	av, err := attributevalue.MarshalMap(event)
 	if err != nil {
@@ -100,7 +100,7 @@ func WriteEventToDynamoDB(svc *dynamodb.Client, event models.Event, eventsTableN
 	logrus.Debugf("PutItem input: %v", input)
 
 	// Put the item into the DynamoDB table
-	_, err = svc.PutItem(context.TODO(), input)
+	_, err = dynamoClient.PutItem(context.TODO(), input)
 	if err != nil {
 		logrus.Errorf("failed to put item in DynamoDB: %v", err)
 		return fmt.Errorf("failed to put item in DynamoDB: %v", err)
@@ -112,7 +112,7 @@ func WriteEventToDynamoDB(svc *dynamodb.Client, event models.Event, eventsTableN
 }
 
 // FetchEventsFromDynamoDB fetches all events from the DynamoDB table
-func FetchEventsFromDynamoDB(svc *dynamodb.Client) ([]models.Event, error) {
+func FetchEventsFromDynamoDB(dynamoClient *dynamodb.Client) ([]models.Event, error) {
 	var events []models.Event
 
 	// Create the Scan input
@@ -121,7 +121,7 @@ func FetchEventsFromDynamoDB(svc *dynamodb.Client) ([]models.Event, error) {
 	}
 
 	// Scan the DynamoDB table
-	result, err := svc.Scan(context.TODO(), input)
+	result, err := dynamoClient.Scan(context.TODO(), input)
 	if err != nil {
 		return nil, fmt.Errorf("failed to scan table: %v", err)
 	}

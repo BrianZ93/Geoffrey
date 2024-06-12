@@ -10,9 +10,9 @@ import (
 	logrus "github.com/sirupsen/logrus"
 )
 
-func CreateTable(svc *dynamodb.Client, tableName string) error {
+func CreateTable(dynamoClient *dynamodb.Client, tableName string) error {
 	// Check if the table already exists
-	_, err := svc.DescribeTable(context.TODO(), &dynamodb.DescribeTableInput{
+	_, err := dynamoClient.DescribeTable(context.TODO(), &dynamodb.DescribeTableInput{
 		TableName: aws.String(tableName),
 	})
 	if err == nil {
@@ -41,7 +41,7 @@ func CreateTable(svc *dynamodb.Client, tableName string) error {
 		},
 	}
 
-	_, err = svc.CreateTable(context.TODO(), input)
+	_, err = dynamoClient.CreateTable(context.TODO(), input)
 	if err != nil {
 		return fmt.Errorf("failed to create table: %v", err)
 	}

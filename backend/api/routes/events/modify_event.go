@@ -2,15 +2,50 @@ package routes
 
 import (
 	models "backend/models/events"
+	"context"
 	"database/sql"
 	"fmt"
 	"net/http"
 
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
 
-func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
+func updateEventInDynamoDb(dynamoClient *dynamodb.Client, event models.Event, tableName string) error {
+	// Marshal the event into a map of DynamoDB attribute values
+	av, err := attributevalue.MarshalMap(event)
+	if err != nil {
+		logrus.Errorf("failed to marshal event: %v", err)
+		return fmt.Errorf("failed to marshal event: %v", err)
+	}
+
+	// Log the marshaled event for debugging
+	logrus.Debugf("Marshaled event: %v", av)
+
+	// Create the PutItem input for the event
+	input := &dynamodb.PutItemInput{
+		TableName: aws.String(tableName),
+		Item:      av,
+	}
+
+	// Log the PutItem input for debugging
+	logrus.Debugf("PutItem input: %v", input)
+
+	// Put the item into the DynamoDB table
+	_, err = dynamoClient.PutItem(context.TODO(), input)
+	if err != nil {
+		logrus.Errorf("failed to update event in DynamoDB: %v", err)
+		return fmt.Errorf("failed to update event in DynamoDB: %v", err)
+	}
+
+	logrus.Printf("Event %s updated in DynamoDB successfully", event.Id)
+	return nil
+}
+
+func UpdateEvent(db *sql.DB, eventsTableName string, dynamoClient *dynamodb.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var event models.Event
 		if err := c.Bind(&event); err != nil {
@@ -22,7 +57,7 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 
 		// Check if the event exists
 		var eventExists bool
-		err := db.QueryRow(fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM %s WHERE Id = ?)", tableName), event.Id).Scan(&eventExists)
+		err := db.QueryRow(fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM %s WHERE Id = ?)", eventsTableName), event.Id).Scan(&eventExists)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
@@ -33,7 +68,7 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 		// Update the event details
 		logrus.Infof("Updating event: %+v", event)
 
-		_, err = db.Exec(fmt.Sprintf("UPDATE %s SET Title = ?, StartTime = ?, EndTime = ? WHERE Id = ?", tableName),
+		_, err = db.Exec(fmt.Sprintf("UPDATE %s SET Title = ?, StartTime = ?, EndTime = ? WHERE Id = ?", eventsTableName),
 			event.Title, event.StartTime, event.EndTime, event.Id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
@@ -92,6 +127,8 @@ func UpdateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 		}
 
 		logrus.Infof("Event updated successfully: %+v", event)
+		logrus.Info("Updating event in dynamoDB...")
+		updateEventInDynamoDb(dynamoClient, event, eventsTableName)
 
 		return c.JSON(http.StatusOK, map[string]string{"message": "Event updated successfully"})
 	}

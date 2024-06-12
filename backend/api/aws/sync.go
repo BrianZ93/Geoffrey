@@ -1,7 +1,7 @@
 package aws
 
 import (
-	"backend/api/aws/sync"
+	"backend/api/aws/types"
 	routes "backend/api/routes/events"
 	models "backend/models/events"
 	"database/sql"
@@ -21,7 +21,7 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 	}
 
 	// Fetch events from DynamoDB
-	dynamoEvents, err := sync.FetchEventsFromDynamoDB(svc)
+	dynamoEvents, err := types.FetchEventsFromDynamoDB(svc)
 	if err != nil {
 		logrus.Errorf("error fetching events from DynamoDB: %v", err)
 		return fmt.Errorf("error fetching events from DynamoDB: %v", err)
@@ -37,7 +37,7 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 	for _, event := range sqliteEvents {
 		if _, exists := dynamoEventMap[event.Id]; !exists {
 			logrus.Infof("Event %s found in local Sqlite3 database but not in dynamoDB table %s, adding event...", event.Title, eventsTableName)
-			err := sync.WriteEventToDynamoDB(svc, event, eventsTableName)
+			err := types.WriteEventToDynamoDB(svc, event, eventsTableName)
 			if err != nil {
 				logrus.Errorf("error writing event to DynamoDB: %v", err)
 				return fmt.Errorf("error writing event to DynamoDB: %v", err)
@@ -46,14 +46,14 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 
 		// Check if all Guests exist and add them if they do not
 		for _, guest := range event.Guests {
-			exists, err := sync.CheckGuestExists(svc, guest.Id, guestsTableName)
+			exists, err := types.CheckGuestExists(svc, guest.Id, guestsTableName)
 			if err != nil {
 				logrus.Errorf("error checking if guest %s exists in DynamoDB: %v", guest.Id, err)
 				return fmt.Errorf("error checking if guest %s exists in DynamoDB: %v", guest.Id, err)
 			}
 			if !exists {
 				logrus.Infof("Guest %s for event %s does not exist in DynamoDB. Adding guest...", guest.Name, event.Title)
-				err := sync.WriteGuestToDynamoDB(svc, guest, guestsTableName)
+				err := types.WriteGuestToDynamoDB(svc, guest, guestsTableName)
 				if err != nil {
 					logrus.Errorf("error writing guest to DynamoDB: %v", err)
 					return fmt.Errorf("error writing guest to DynamoDB: %v", err)
@@ -65,14 +65,14 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 
 		// Check if all Venues exist and add them if they do not
 		for _, venue := range event.Venues {
-			exists, err := sync.CheckVenueExists(svc, venue.Id, venuesTableName)
+			exists, err := types.CheckVenueExists(svc, venue.Id, venuesTableName)
 			if err != nil {
 				logrus.Errorf("error checking if venue %s exists in DynamoDB: %v", venue.Id, err)
 				return fmt.Errorf("error checking if venue %s exists in DynamoDB: %v", venue.Id, err)
 			}
 			if !exists {
 				logrus.Infof("Venue %s for event %s does not exist in DynamoDB. Adding venue...", venue.Title, event.Title)
-				err := sync.WriteVenueToDynamoDB(svc, venue, venuesTableName)
+				err := types.WriteVenueToDynamoDB(svc, venue, venuesTableName)
 				if err != nil {
 					logrus.Errorf("error writing venue to DynamoDB: %v", err)
 					return fmt.Errorf("error writing venue to DynamoDB: %v", err)

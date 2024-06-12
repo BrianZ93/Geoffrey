@@ -1,4 +1,4 @@
-package sync
+package types
 
 import (
 	models "backend/models/events"
@@ -14,7 +14,7 @@ import (
 )
 
 // FetchVenueFromDynamoDB fetches a venue by ID from the DynamoDB table
-func FetchVenueFromDynamoDB(svc *dynamodb.Client, venueID string, venuesTableName string) (*models.Venue, error) {
+func FetchVenueFromDynamoDB(dynamoClient *dynamodb.Client, venueID string, venuesTableName string) (*models.Venue, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(venuesTableName),
 		Key: map[string]types.AttributeValue{
@@ -22,7 +22,7 @@ func FetchVenueFromDynamoDB(svc *dynamodb.Client, venueID string, venuesTableNam
 		},
 	}
 
-	result, err := svc.GetItem(context.TODO(), input)
+	result, err := dynamoClient.GetItem(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func CompareVenueDetails(db *sql.DB, sqliteVenue models.Venue, dynamoVenue model
 }
 
 // CheckVenueExists checks if a venue exists in the DynamoDB table
-func CheckVenueExists(svc *dynamodb.Client, venueID string, venuesTableName string) (bool, error) {
+func CheckVenueExists(dynamoClient *dynamodb.Client, venueID string, venuesTableName string) (bool, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(venuesTableName),
 		Key: map[string]types.AttributeValue{
@@ -89,7 +89,7 @@ func CheckVenueExists(svc *dynamodb.Client, venueID string, venuesTableName stri
 		},
 	}
 
-	result, err := svc.GetItem(context.TODO(), input)
+	result, err := dynamoClient.GetItem(context.TODO(), input)
 	if err != nil {
 		return false, err
 	}
@@ -98,7 +98,7 @@ func CheckVenueExists(svc *dynamodb.Client, venueID string, venuesTableName stri
 }
 
 // WriteVenueToDynamoDB writes the given venue to the DynamoDB table
-func WriteVenueToDynamoDB(svc *dynamodb.Client, venue models.Venue, venuesTableName string) error {
+func WriteVenueToDynamoDB(dynamoClient *dynamodb.Client, venue models.Venue, venuesTableName string) error {
 	// Marshal the venue into a map of DynamoDB attribute values
 	av, err := attributevalue.MarshalMap(venue)
 	if err != nil {
@@ -119,7 +119,7 @@ func WriteVenueToDynamoDB(svc *dynamodb.Client, venue models.Venue, venuesTableN
 	logrus.Debugf("PutItem input: %v", input)
 
 	// Put the item into the DynamoDB table
-	_, err = svc.PutItem(context.TODO(), input)
+	_, err = dynamoClient.PutItem(context.TODO(), input)
 	if err != nil {
 		logrus.Errorf("failed to put venue in DynamoDB: %v", err)
 		return fmt.Errorf("failed to put venue in DynamoDB: %v", err)

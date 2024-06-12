@@ -1,4 +1,4 @@
-package sync
+package types
 
 import (
 	models "backend/models/events"
@@ -14,7 +14,7 @@ import (
 )
 
 // FetchGuestFromDynamoDB fetches a guest by ID from the DynamoDB table
-func FetchGuestFromDynamoDB(svc *dynamodb.Client, guestID string, guestsTableName string) (*models.Guest, error) {
+func FetchGuestFromDynamoDB(dynamoClient *dynamodb.Client, guestID string, guestsTableName string) (*models.Guest, error) {
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(guestsTableName),
 		Key: map[string]types.AttributeValue{
@@ -22,7 +22,7 @@ func FetchGuestFromDynamoDB(svc *dynamodb.Client, guestID string, guestsTableNam
 		},
 	}
 
-	result, err := svc.GetItem(context.TODO(), input)
+	result, err := dynamoClient.GetItem(context.TODO(), input)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func CompareGuestDetails(db *sql.DB, sqliteGuest models.Guest, dynamoGuest model
 }
 
 // WriteGuestToDynamoDB writes the given guest to the DynamoDB table
-func WriteGuestToDynamoDB(svc *dynamodb.Client, guest models.Guest, tableName string) error {
+func WriteGuestToDynamoDB(dynamoClient *dynamodb.Client, guest models.Guest, tableName string) error {
 	// Marshal the guest into a map of DynamoDB attribute values
 	av, err := attributevalue.MarshalMap(guest)
 	if err != nil {
@@ -112,7 +112,7 @@ func WriteGuestToDynamoDB(svc *dynamodb.Client, guest models.Guest, tableName st
 	logrus.Debugf("PutItem input: %v", input)
 
 	// Put the item into the DynamoDB table
-	_, err = svc.PutItem(context.TODO(), input)
+	_, err = dynamoClient.PutItem(context.TODO(), input)
 	if err != nil {
 		logrus.Errorf("failed to put guest in DynamoDB: %v", err)
 		return fmt.Errorf("failed to put guest in DynamoDB: %v", err)

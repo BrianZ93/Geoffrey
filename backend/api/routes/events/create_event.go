@@ -3,14 +3,52 @@ package routes
 import (
 	"backend/api"
 	models "backend/models/events"
+	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
-func CreateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
+func addEventToDynamoDb(dynamoClient *dynamodb.Client, event models.Event, tableName string) error {
+	// Marshall the event into a map of DynamoDB attribute values
+	av, err := attributevalue.MarshalMap(event)
+	if err != nil {
+		logrus.Errorf("failed to marshal event: %v", err)
+		return fmt.Errorf("failed to marshal event: %v", err)
+	}
+
+	// Log the marshaled guest for debugging
+	logrus.Debugf("Marshaled event: %v", av)
+
+	// Create the PutItem input for the event
+	input := &dynamodb.PutItemInput{
+		TableName: aws.String(tableName),
+		Item:      av,
+	}
+
+	// Log the PutItem input for debugging
+	logrus.Debugf("PutItem input: %v", input)
+
+	// Put the item into the DynamoDB table
+	_, err = dynamoClient.PutItem(context.TODO(), input)
+	if err != nil {
+		logrus.Errorf("failed to put event in DynamoDB: %v", err)
+		return fmt.Errorf("failed to put event in DynamoDB: %v", err)
+	}
+
+	logrus.Printf("Event %s written to DynamoDB successfully", event.Id)
+	return nil
+
+}
+
+func CreateEvent(db *sql.DB, tableName string, dynamoClient *dynamodb.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var event models.Event
 		if err := c.Bind(&event); err != nil {
@@ -55,6 +93,11 @@ func CreateEvent(db *sql.DB, tableName string) echo.HandlerFunc {
 				venue.EventId, venue.Id, venue.Title, venue.Address, venue.StartTime, venue.EndTime); err != nil {
 				return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 			}
+		}
+
+		err = addEventToDynamoDb(dynamoClient, event, tableName)
+		if err != nil {
+			logrus.Errorf("Error adding event to dynamoDB table: %v", err)
 		}
 
 		return c.JSON(http.StatusOK, map[string]string{"message": "Event created successfully"})
