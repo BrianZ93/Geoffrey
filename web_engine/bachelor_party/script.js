@@ -18,3 +18,11 @@ window.addEventListener("scroll", () => {
     }
   });
 });
+
+function openRSVP() {
+  document.getElementById("rsvp-modal").style.display = "block";
+}
+
+function closeRSVP() {
+  document.getElementById("rsvp-modal").style.display = "none";
+}

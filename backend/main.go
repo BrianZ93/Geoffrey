@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/api"
+	"backend/api/aws"
 	eventroutes "backend/api/routes/events"
 
 	"github.com/labstack/echo/v4"
@@ -16,7 +17,7 @@ func main() {
 		FullTimestamp: true,
 	})
 
-	logrus.SetLevel(logrus.InfoLevel)
+	logrus.SetLevel(logrus.DebugLevel)
 	logrus.Info("Starting backend")
 
 	// Create the database connection
@@ -39,16 +40,37 @@ func main() {
 	// Table Names
 	eventsTableName := "Events"
 	guestsTableName := "Events_Guests"
+	venuesTableName := "Events_Venues"
+
+	// Create dynamoDB interface
+	dynamoClient := aws.InitDynamoDBClient()
+	// Create events and events_guests table if it does not exist
+	err = aws.CreateTable(dynamoClient, eventsTableName)
+	if err != nil {
+		logrus.Fatalf("Error creating table: %v", err)
+	}
+	err = aws.CreateTable(dynamoClient, guestsTableName)
+	if err != nil {
+		logrus.Fatalf("Error creating table: %v", err)
+	}
+	err = aws.CreateTable(dynamoClient, venuesTableName)
+	if err != nil {
+		logrus.Fatalf("Error creating table: %v", err)
+	}
+
+	// Grab any events that exist locally and write them to DynamoDB
+	// *** This should really only happen if the dynamoDB table gets wiped ***
+	aws.SyncEventsFromSqLite3ToDynamoDB(db, dynamoClient, eventsTableName, guestsTableName, venuesTableName)
 
 	// Event Routes
 	e.POST("/create-event", eventroutes.CreateEvent(db, eventsTableName))
-	e.GET("/events", eventroutes.GetEvents(db, eventsTableName))
+	e.GET("/events", eventroutes.GetEventsHandler(db, eventsTableName))
 	e.PUT("/events/:eventId", eventroutes.UpdateEvent(db, eventsTableName))
-	e.DELETE("/events/:eventId/guests/:guestId", eventroutes.DeleteGuest(db, eventsTableName))
 
 	// Guests Routes
 	e.POST("/events/:eventId/guests", eventroutes.AddGuest(db, guestsTableName))
 	e.PUT("/events/:eventId/guests/:guestId", eventroutes.ModifyGuest(db, guestsTableName))
+	e.DELETE("/events/:eventId/guests/:guestId", eventroutes.DeleteGuest(db, eventsTableName))
 
 	// Starting the backend server
 	logrus.Info("Starting server on port 8080...")

@@ -7,22 +7,117 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="navbar">
-      <a href="#about" class="nav-item" id="nav-about">About</a>
-      <a href="#itinerary" class="nav-item" id="nav-itinerary">Itinerary</a>
-      <a href="#rsvp" class="nav-item" id="nav-rsvp">RSVP</a>
+    <!-- Navbar Starts Here -->
+    <div class="navbar bg-primary">
+      <div class="nav-content">
+        <div class="nav-left">
+          <a href="#about-chicago" class="nav-item" id="nav-about-chicago"
+            >About Chicago</a
+          >
+          <a
+            href="#itinerary-chicago"
+            class="nav-item"
+            id="nav-itinerary-chicago"
+            >Itinerary Chicago</a
+          >
+        </div>
+        <h1 class="navbar-header">Bachelor Party</h1>
+        <div class="nav-right">
+          <a href="#about-mexico" class="nav-item" id="nav-about-mexico"
+            >About Mexico City</a
+          >
+          <a href="#itinerary-mexico" class="nav-item" id="nav-itinerary-mexico"
+            >Itinerary Mexico City</a
+          >
+        </div>
+      </div>
+      <div class="nav-rsvp-button">
+        <button class="rsvp-button" onclick="openRSVP()">RSVP</button>
+      </div>
     </div>
-    <div id="about" class="section">
-      <h2>About</h2>
-      <p>Information about the bachelor party...</p>
+    <!-- Navbar Ends Here -->
+
+    <!-- RSVP Modal Starts Here -->
+    <div id="rsvp-modal" class="modal">
+      <div class="modal-content">
+        <div class="form">
+          <div class="info">
+            <span class="close-button" onclick="closeRSVP()">&times;</span>
+            <h1>RSVP</h1>
+            <h2>for the bachelor party of</h2>
+            <h1>Brian Zanayed</h1>
+            <p class="line">________________________________________</p>
+            <h2>The Details</h2>
+            <h4>Chicago Party</h4>
+            <p>Thursday, February 20, 2025</p>
+            <div class="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="attendance-chicago"
+                  value="attending"
+                />
+                Attending
+              </label>
+              <label>
+                <input type="radio" name="attendance-chicago" value="regrets" />
+                Regrets
+              </label>
+            </div>
+            <br />
+            <h2>The Details</h2>
+            <h4>(Location TBD) Party</h4>
+            <p>Friday, February 21, 2025 - Sunday, February 23, 2025</p>
+            <div class="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="attendance-location"
+                  value="attending"
+                />
+                Attending
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="attendance-location"
+                  value="regrets"
+                />
+                Regrets
+              </label>
+            </div>
+            <p class="line">________________________________________</p>
+            <input type="text" placeholder="Name" />
+          </div>
+          <div class="submit-rsvp-box"><button>Submit RSVP</button></div>
+        </div>
+      </div>
     </div>
-    <div id="itinerary" class="section">
-      <h2>Itinerary</h2>
-      <p>Details about the itinerary...</p>
+    <!-- RSVP Modal Ends Here -->
+
+    <div id="about-chicago" class="section">
+      <div class="container">
+        <h2>About Chicago</h2>
+        <p>Information about the Chicago bachelor party...</p>
+      </div>
     </div>
-    <div id="rsvp" class="section">
-      <h2>RSVP</h2>
-      <p>RSVP information..</p>
+    <div id="itinerary-chicago" class="section">
+      <div class="container">
+        <h2>Itinerary Chicago</h2>
+        <p>Details about the Chicago itinerary...</p>
+      </div>
+    </div>
+    <div id="about-mexico" class="section">
+      <div class="container">
+        <h2>About Mexico City</h2>
+        <p>Information about the Mexico City bachelor party...</p>
+      </div>
+    </div>
+    <div id="itinerary-mexico" class="section">
+      <div class="container">
+        <h2>Itinerary Mexico City</h2>
+        <p>Details about the Mexico City itinerary...</p>
+      </div>
     </div>
 
     <script src="script.js"></script>

@@ -17,3 +17,5 @@ services:
       - ./backend/.air.toml:/app/.air.toml
     network_mode: host
     command: air
+    env_file:
+      - .env
