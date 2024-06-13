@@ -131,28 +131,28 @@ button:focus {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: to add a subtle shadow */
 }
 
-#about-chicago {
+#about {
   background-color: #f4f4f4;
 }
 
-#itinerary-chicago {
+#itinerary {
   background-color: #ddd;
 }
 
-#about-mexico {
+#accomodations {
   background-color: #c4c4c4;
 }
 
-#itinerary-mexico {
+#suggestions {
   background-color: #bbb;
 }
 
 .primary {
-  color: #3e0a92;
+  color: #121f38;
 }
 
 .bg-primary {
-  background-color: #3e0a92;
+  background-color: #121f38;
 }
 
 /* RSVP Modal */

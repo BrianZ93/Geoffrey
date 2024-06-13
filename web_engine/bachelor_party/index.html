@@ -11,23 +11,16 @@
     <div class="navbar bg-primary">
       <div class="nav-content">
         <div class="nav-left">
-          <a href="#about-chicago" class="nav-item" id="nav-about-chicago"
-            >About Chicago</a
-          >
-          <a
-            href="#itinerary-chicago"
-            class="nav-item"
-            id="nav-itinerary-chicago"
-            >Itinerary Chicago</a
-          >
+          <a href="#about" class="nav-item" id="nav-about">About</a>
+          <a href="#itinerary" class="nav-item" id="nav-itinerary">Itinerary</a>
         </div>
         <h1 class="navbar-header">Bachelor Party</h1>
         <div class="nav-right">
-          <a href="#about-mexico" class="nav-item" id="nav-about-mexico"
-            >About Mexico City</a
+          <a href="#accomodations" class="nav-item" id="nav-accomodations"
+            >Accomodations</a
           >
-          <a href="#itinerary-mexico" class="nav-item" id="nav-itinerary-mexico"
-            >Itinerary Mexico City</a
+          <a href="#suggestions" class="nav-item" id="nav-suggestions"
+            >Suggestions</a
           >
         </div>
       </div>
@@ -52,15 +45,11 @@
             <p>Thursday, February 20, 2025</p>
             <div class="radio-group">
               <label>
-                <input
-                  type="radio"
-                  name="attendance-chicago"
-                  value="attending"
-                />
+                <input type="radio" name="attendance" value="attending" />
                 Attending
               </label>
               <label>
-                <input type="radio" name="attendance-chicago" value="regrets" />
+                <input type="radio" name="attendance" value="regrets" />
                 Regrets
               </label>
             </div>
@@ -95,31 +84,32 @@
     </div>
     <!-- RSVP Modal Ends Here -->
 
-    <div id="about-chicago" class="section">
+    <div id="about" class="section">
       <div class="container">
         <h2>About Chicago</h2>
         <p>Information about the Chicago bachelor party...</p>
       </div>
     </div>
-    <div id="itinerary-chicago" class="section">
+    <div id="itinerary" class="section">
       <div class="container">
         <h2>Itinerary Chicago</h2>
         <p>Details about the Chicago itinerary...</p>
       </div>
     </div>
-    <div id="about-mexico" class="section">
+    <div id="accomodations" class="section">
       <div class="container">
         <h2>About Mexico City</h2>
         <p>Information about the Mexico City bachelor party...</p>
       </div>
     </div>
-    <div id="itinerary-mexico" class="section">
+    <div id="suggestions" class="section">
       <div class="container">
         <h2>Itinerary Mexico City</h2>
         <p>Details about the Mexico City itinerary...</p>
       </div>
     </div>
 
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1040.0.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
