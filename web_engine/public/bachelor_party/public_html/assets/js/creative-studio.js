@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /*!
 =========================================================
 * Creative Studio Landing page
@@ -33,6 +34,7 @@ $(document).ready(function () {
   });
 });
 
+// eslint-disable-next-line no-unused-vars
 function selectTab(tab) {
   document.getElementById("attending-tab").classList.remove("active");
   document.getElementById("regrets-tab").classList.remove("active");
