@@ -1,13 +1,6 @@
 import React from "react";
-import { ActivePage } from "../App";
 
-interface HappilyEverAfterPageProps {
-  activePage: ActivePage;
-}
-
-const HappilyEverAfterPage: React.FC<HappilyEverAfterPageProps> = ({
-  activePage,
-}) => {
+const HappilyEverAfterPage = ({ activePage }) => {
   return (
     <iframe
       src={`${process.env.PUBLIC_URL}/happily_ever_after_party/index.html`}

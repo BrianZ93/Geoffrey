@@ -4,19 +4,17 @@ import BachelorPartyPage from "./pages/bachelor_party";
 import HappilyEverAfterPage from "./pages/happily_ever_after_party";
 
 import { Amplify } from "aws-amplify";
-import config from "./aws/aws_exports";
+import config from "./pages/aws/aws_exports";
 
 Amplify.configure(config);
 
-export enum ActivePage {
-  BachelorParty,
-  HappilyEverAfter,
-}
+const ActivePage = {
+  BachelorParty: "BachelorParty",
+  HappilyEverAfter: "HappilyEverAfter",
+};
 
 function App() {
-  const [activePage, setActivePage] = useState<ActivePage>(
-    ActivePage.BachelorParty
-  );
+  const [activePage, setActivePage] = useState(ActivePage.BachelorParty);
 
   return (
     <div className="App">

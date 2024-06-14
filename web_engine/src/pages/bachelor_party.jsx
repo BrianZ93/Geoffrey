@@ -1,15 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ActivePage } from "../App";
-import { fetchItems } from "../aws/aws_config";
+import { fetchItems } from "./aws/aws_config";
 
-interface BachelorPartyPageProps {
-  activePage: ActivePage;
-}
-
-const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({
-  activePage,
-}) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+const BachelorPartyPage = ({ activePage }) => {
+  const iframeRef = useRef(null);
   const [dataToPass, setDataToPass] = useState({
     message: "Hello from React",
     items: [],
