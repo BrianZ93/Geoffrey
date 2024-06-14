@@ -7,6 +7,7 @@ const ACCESS_KEY_ID = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
 const SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_ACCESS_KEY;
 
 console.log(REGION);
+console.log(ACCESS_KEY_ID);
 
 // DynamoDB Client
 const ddbClient = new DynamoDBClient({
