@@ -1,16 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ActivePage } from "../App";
+import { fetchItems } from "../aws/aws_config";
 
 interface BachelorPartyPageProps {
   activePage: ActivePage;
 }
 
-const dataToPass = { message: "Hello from React", items: [1, 2, 3, 4, 5] };
-
 const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({
   activePage,
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [dataToPass, setDataToPass] = useState({
+    message: "Hello from React",
+    items: [],
+  });
 
   const sendMessage = () => {
     if (iframeRef.current) {
@@ -22,10 +25,19 @@ const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      const items = await fetchItems();
+      setDataToPass({ message: "Hello from React", items });
+    };
+
+    fetchData();
+  }, [activePage]);
+
+  useEffect(() => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
       iframeRef.current.onload = sendMessage;
     }
-  }, [activePage]);
+  }, [activePage, dataToPass]);
 
   return (
     <iframe

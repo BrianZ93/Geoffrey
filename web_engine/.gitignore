@@ -22,6 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# aws
+/src/aws/aws_config.js
+/src/aws/aws_exports.js
+
 # amplify
 .amplify
 amplify_outputs*
