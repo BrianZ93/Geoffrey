@@ -2,4 +2,4 @@
 **.tmp
 **/tmp
 /frontend/.vscode
-.env
+**.env
