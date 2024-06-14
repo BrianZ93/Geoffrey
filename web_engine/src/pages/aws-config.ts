@@ -21,7 +21,7 @@ const createDynamoDBClient = (): DynamoDBClient => {
   } else {
     // Amplify environment
     return new DynamoDBClient({
-      region: "us-east-2", // Amplify sets this automatically
+      region: "us-east-2",
     });
   }
 };
