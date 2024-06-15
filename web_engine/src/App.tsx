@@ -14,6 +14,9 @@ function App() {
     ActivePage.BachelorParty
   );
 
+  // GET THIS FROM THE DASHBOARD OR DB TABLE
+  const event_id = "76125999-17f0-4f22-b47e-ef4ac16fb1cc"
+
   return (
     <div className="App">
       {activePage === ActivePage.BachelorParty && (

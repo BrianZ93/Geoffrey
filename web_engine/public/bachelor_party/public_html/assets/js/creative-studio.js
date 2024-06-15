@@ -34,14 +34,3 @@ $(document).ready(function () {
   });
 });
 
-// eslint-disable-next-line no-unused-vars
-function selectTab(tab) {
-  document.getElementById("attending-tab").classList.remove("active");
-  document.getElementById("regrets-tab").classList.remove("active");
-
-  if (tab === "attending") {
-    document.getElementById("attending-tab").classList.add("active");
-  } else {
-    document.getElementById("regrets-tab").classList.add("active");
-  }
-}

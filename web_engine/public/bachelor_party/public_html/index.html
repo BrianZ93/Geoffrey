@@ -75,9 +75,8 @@
     <!-- Page Header -->
     <header class="header">
       <div class="overlay">
-        <h6 class="subtitle">February 20 - 23, 2025</h6>
+        <h6 class="subtitle">New Orleans - February 20 - 23, 2025</h6>
         <h1 class="title">Brian's Bachelor Party</h1>
-        <h6 class="subtitle">New Orleans</h6>
         <div class="buttons text-center">
           <a href="#rsvp" class="btn btn-primary rounded w-lg btn-lg my-1"
             >RSVP</a
@@ -95,7 +94,7 @@
       <div class="container text-center">
           <br>
           <h6 class="section-subtitle">Cost Estimate - $890 Per Person</h6>
-          <h4>Wedding related events can feel like an obligation, but there are no hard feelings if this is something you just don't want to do. That is why I have provided a cost estimate for you here to help you make a decision on whether you would like to attend.</h4>
+          <h4>Wedding related events can feel like an obligation, but there are no hard feelings if this is something you just don't want to do. That is why I have provided a cost estimate for you here to help you make a decision on whether you would like to attend or not.</h4>
           <div class="widget mb-4">
               <div class="widget-item">
                 <i class="material-icons">airplanemode_active</i>
@@ -140,7 +139,7 @@
             <h6 class="section-title mb-3">
               Property to be booked after RSVP's come in
             </h6>
-            <p>More information on the property to come.</p>
+            <p>More information on the property to come. There will hopefully be a hot tub</p>
             <!-- <p>Cum laudantium unde nemo doloribus eligendi quodarum ea vitae dicta. Accusantium vero, ea? Alias, atque libero. Id, ut harum. </p> -->
             <!-- <p>consectetur adipisicing elit. Omnis quidem, quos iure a dolorum illum culpa quia nemo soluta, ratione harum beatae minus doloribus consectetur! Similique tempora sunt doloribus molestias.</p> -->
           </div>
@@ -279,7 +278,7 @@
           </div>
           <div class="col-sm-6 col-md-4">
             <div class="card text-center mb-4">
-              <a href="https://www.caesars.com/caesars-new-orleans">
+              <a href="https://www.caesars.com/caesars-new-orleans" target="_blank">
                 <img
                   class="card-img-top inset"
                   src="assets/imgs/avatar-1.jpg"
@@ -415,16 +414,18 @@
           </div>
           <div class="form">
             <h6 class="section-title mb-4">RSVP</h6>
-            <form>
+            <form id="rsvpForm">
               <div class="form-group">
                 <input
                   type="email"
                   class="form-control form-control-lg"
-                  id="exampleInputEmail1"
+                  id="email"
                   aria-describedby="emailHelp"
                   placeholder="Enter email"
                   required
                 />
+                <p id="message" class=""></p>
+
               </div>
               <div class="tab-group">
                 <div
@@ -445,7 +446,7 @@
               <div class="form-group">
                 <textarea
                   name="contact-message"
-                  id=""
+                  id="note"
                   cols="30"
                   rows="7"
                   class="form-control form-control-lg"
@@ -453,8 +454,11 @@
                 ></textarea>
               </div>
               <button
+                id="submitBtn"
                 type="submit"
                 class="btn btn-primary btn-block btn-lg mt-3"
+                title="Must enter email address to submit RSVP"
+                disabled
               >
                 Submit RSVP
               </button>

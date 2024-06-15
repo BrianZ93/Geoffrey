@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { getAllItems } from "./aws-interface";
+import { getAllItems, updateGuest } from "./aws-interface";
 import { ActivePage } from "../App";
 
 interface BachelorPartyPageProps {
@@ -41,6 +41,35 @@ const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({ activePage }) => 
       iframeRef.current.onload = sendMessage;
     }
   }, [activePage, sendMessage]);
+
+  useEffect(() => {
+    const handleCustomEvent = async (event: Event) => {
+      const customEvent = event as CustomEvent<{ email: string; note: string; rsvp: boolean }>;
+      console.log("hi");
+      console.log("Received data:", customEvent.detail);
+
+      const guest = dataToPass.items.find(
+        (guest) => guest.email.toLowerCase() === customEvent.detail.email.toLowerCase()
+      )
+
+      if (guest) {
+        try {
+          const result = await updateGuest("Events_Guests", guest.id, { attending: customEvent.detail.rsvp})
+          console.log("Guest updated:", result)
+        } catch (error) {
+          console.error("Failed to update guest:", error)
+        }
+      } else {
+        console.error("Guest not found")
+      }
+    };
+
+    window.addEventListener('rsvpSubmitted', handleCustomEvent as EventListener);
+
+    return () => {
+      window.removeEventListener('rsvpSubmitted', handleCustomEvent as EventListener);
+    };
+  }, [dataToPass.items]);
 
   return (
     <iframe
