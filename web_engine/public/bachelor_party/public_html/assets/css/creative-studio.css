@@ -2935,12 +2935,14 @@ fieldset:disabled a.btn {
 }
 
 .btn-primary {
-  color: #fff;
+  border-radius: 25px !important;
+  color: #fff !important;
   background-color: #ff214f;
   border-color: #ff214f;
 }
 
 .btn-primary:hover {
+  border-radius: 25px !important;
   color: #fff;
   background-color: #fa0034;
   border-color: #ed0031;
@@ -11867,6 +11869,7 @@ p {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  color: black !important;
 }
 
 .contact-card .infos {
@@ -12280,6 +12283,7 @@ section .py-md {
 section.has-bg-img {
   background: rgba(33, 37, 41, 0.95);
   position: relative;
+  color: #fff;
 }
 
 section.has-bg-img:after {
@@ -12399,4 +12403,8 @@ section .section-title {
 .tab.active {
   background: var(--primary);
   color: white;
+}
+
+.itinerary-card-text {
+  color: black !important;
 }
