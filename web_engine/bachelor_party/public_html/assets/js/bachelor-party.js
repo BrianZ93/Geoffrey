@@ -144,7 +144,6 @@ document
           headers: {
             "Content-Type": "application/json",
           },
-          body: "",
         }
       );
 
