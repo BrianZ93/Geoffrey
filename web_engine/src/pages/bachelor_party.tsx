@@ -74,7 +74,7 @@ const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({ activePage }) => 
   return (
     <iframe
       ref={iframeRef}
-      src={`.././bachelor_party/public_html/index.html`}
+      src={`${process.env.PUBLIC_URL}/bachelor_party/public_html/index.html`}
       title="Bachelor Party"
       style={{ width: "100%", height: "100%", border: "none" }}
       onLoad={sendMessage} // Ensure message is sent after iframe is loaded
