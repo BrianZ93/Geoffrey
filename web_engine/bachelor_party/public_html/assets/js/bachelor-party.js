@@ -24,22 +24,6 @@ $(document).ready(function () {
 window.receivedData = {}; // Initialize a global variable to store the received data
 let rsvp = false;
 
-window.addEventListener("message", (event) => {
-  if (event.origin !== window.location.origin) {
-    return; // Ignore messages from different origins for security reasons
-  }
-  window.receivedData = event.data; // Store the received data in the global variable
-  console.log("Data received from parent:", window.receivedData);
-
-  // Log all emails for debugging
-  const guests = window.receivedData.items || [];
-  const emails = guests.map((guest) => guest.email);
-  console.info("Emails in guest list:", emails);
-
-  // Update email validation with the received guests data
-  document.getElementById("email").addEventListener("blur", validateEmail);
-});
-
 function enableSubmitButton() {
   const submitBtn = document.getElementById("submitBtn");
   submitBtn.disabled = false;
