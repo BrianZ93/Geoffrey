@@ -10,11 +10,13 @@ export enum ActivePage {
 }
 
 function App() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activePage, setActivePage] = useState<ActivePage>(
     ActivePage.BachelorParty
   );
 
   // GET THIS FROM THE DASHBOARD OR DB TABLE
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const event_id = "76125999-17f0-4f22-b47e-ef4ac16fb1cc"
 
   return (
