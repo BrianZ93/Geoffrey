@@ -1,3 +1,25 @@
+// smooth scroll
+$(document).ready(function () {
+  $(".navbar .nav-link").on("click", function (event) {
+    if (this.hash !== "") {
+      event.preventDefault();
+
+      var hash = this.hash;
+
+      $("html, body").animate(
+        {
+          scrollTop: $(hash).offset().top,
+        },
+        700,
+        function () {
+          window.location.hash = hash;
+        }
+      );
+    }
+  });
+});
+
+// AWS
 // Listener for react wrapper to send guests
 window.receivedData = {}; // Initialize a global variable to store the received data
 let rsvp = false;
@@ -118,11 +140,11 @@ document
       const response = await fetch(
         "https://op9d8hqeqf.execute-api.us-east-2.amazonaws.com/dev",
         {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(eventDetail),
+          body: "",
         }
       );
 
