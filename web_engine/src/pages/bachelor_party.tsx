@@ -11,7 +11,9 @@ interface DataToPass {
   items: Record<string, any>[]; // Adjust this type based on the actual structure of items
 }
 
-const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({ activePage }) => {
+const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({
+  activePage,
+}) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [dataToPass, setDataToPass] = useState<DataToPass>({
     message: "Hello from React",
@@ -37,44 +39,51 @@ const BachelorPartyPage: React.FC<BachelorPartyPageProps> = ({ activePage }) => 
   }, [activePage]);
 
   useEffect(() => {
-    if (iframeRef.current && iframeRef.current.contentWindow) {
-      iframeRef.current.onload = sendMessage;
-    }
-  }, [activePage, sendMessage]);
-
-  useEffect(() => {
     const handleCustomEvent = async (event: Event) => {
-      const customEvent = event as CustomEvent<{ email: string; note: string; rsvp: boolean }>;
+      const customEvent = event as CustomEvent<{
+        email: string;
+        note: string;
+        rsvp: boolean;
+      }>;
       console.log("hi");
       console.log("Received data:", customEvent.detail);
 
       const guest = dataToPass.items.find(
-        (guest) => guest.email.toLowerCase() === customEvent.detail.email.toLowerCase()
-      )
+        (guest) =>
+          guest.email.toLowerCase() === customEvent.detail.email.toLowerCase()
+      );
 
       if (guest) {
         try {
-          const result = await updateGuest("Events_Guests", guest.id, { attending: customEvent.detail.rsvp})
-          console.log("Guest updated:", result)
+          const result = await updateGuest("Events_Guests", guest.id, {
+            attending: customEvent.detail.rsvp,
+          });
+          console.log("Guest updated:", result);
         } catch (error) {
-          console.error("Failed to update guest:", error)
+          console.error("Failed to update guest:", error);
         }
       } else {
-        console.error("Guest not found")
+        console.error("Guest not found");
       }
     };
 
-    window.addEventListener('rsvpSubmitted', handleCustomEvent as EventListener);
+    window.addEventListener(
+      "rsvpSubmitted",
+      handleCustomEvent as EventListener
+    );
 
     return () => {
-      window.removeEventListener('rsvpSubmitted', handleCustomEvent as EventListener);
+      window.removeEventListener(
+        "rsvpSubmitted",
+        handleCustomEvent as EventListener
+      );
     };
   }, [dataToPass.items]);
 
   return (
     <iframe
       ref={iframeRef}
-      src={`${process.env.PUBLIC_URL}/bachelor_party/public_html/index.html`}
+      src={`${process.env.PUBLIC_URL}/bachelor_party/public_html/bachelor_party.html`}
       title="Bachelor Party"
       style={{ width: "100%", height: "100%", border: "none" }}
       onLoad={sendMessage} // Ensure message is sent after iframe is loaded

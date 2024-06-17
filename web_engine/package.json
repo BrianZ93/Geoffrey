@@ -20,11 +20,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "REACT_APP_WEBSITE=bachelor_party react-app-rewired build",
-    "build:bachelor_party": "REACT_APP_WEBSITE=bachelor_party react-app-rewired build",
-    "build:happily_ever_after_party": "REACT_APP_WEBSITE=happily_ever_after_party react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

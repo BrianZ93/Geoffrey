@@ -15,9 +15,11 @@ function App() {
     ActivePage.BachelorParty
   );
 
+  console.log("LOGGED ITEM");
+
   // GET THIS FROM THE DASHBOARD OR DB TABLE
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const event_id = "76125999-17f0-4f22-b47e-ef4ac16fb1cc"
+  const event_id = "76125999-17f0-4f22-b47e-ef4ac16fb1cc";
 
   return (
     <div className="App">
