@@ -132,6 +132,7 @@ document
       );
 
       if (response.ok) {
+        console.log(response);
         alert("RSVP updated successfully!");
       } else {
         alert("Failed to update RSVP.");
