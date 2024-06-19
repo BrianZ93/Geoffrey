@@ -12408,3 +12408,48 @@ section .section-title {
 .itinerary-card-text {
   color: black !important;
 }
+
+/* Container for the form and spinner */
+.form-container {
+  position: relative;
+}
+
+/* Loading text styles */
+.loading-text {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 30px); /* Adjust this value to position the text correctly */
+  transform: translateX(-50%);
+  font-size: 16px;
+  color: #22a6b3;
+  z-index: 1000;
+}
+
+.form-container.loading form {
+  opacity: 0.5;
+  pointer-events: none; /* To prevent user interaction */
+}
+
+/* Spinner styles */
+.spinner {
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #22a6b3;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

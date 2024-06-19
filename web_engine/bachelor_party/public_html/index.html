@@ -304,41 +304,46 @@
           </div>
           <div class="col-sm-6 col-md-4">
             <div class="card text-center mb-4">
-              <img class="card-img-top inset" src="assets/imgs/avatar-2.jpg" />
+              <a href="https://www.bartonique.com/" target="_blank">
+                <img
+                  class="card-img-top inset"
+                  src="assets/imgs/avatar-2.jpg"
+                />
+              </a>
+              <br />
               <div class="card-body">
-                <h6 class="small text-primary font-weight-bold">Designer</h6>
-                <h5 class="card-title">Karen Perry</h5>
+                <h6 class="small text-primary font-weight-bold">
+                  Liquid Courage
+                </h6>
+                <h5 class="card-title">Bar Tonique</h5>
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                   Magni quos esse tenetur illo qui, nostrum.
                 </p>
-                <div class="socials">
-                  <a href="javascript:void(0)"><i class="ti-facebook"></i> </a>
-                  <a href="javascript:void(0)"><i class="ti-github"></i></a>
-                  <a href="javascript:void(0)"><i class="ti-dropbox"></i></a>
-                  <a href="javascript:void(0)"><i class="ti-twitter"></i></a>
-                </div>
               </div>
             </div>
           </div>
           <div class="col-sm-6 col-md-4">
             <div class="card text-center mb-4">
-              <img class="card-img-top inset" src="assets/imgs/avatar-3.jpg" />
+              <a
+                href="https://www.neworleans.com/plan/streets/frenchmen-street/"
+                target="_blank"
+              >
+                <img
+                  class="card-img-top inset"
+                  src="assets/imgs/avatar-3.jpg"
+                />
+              </a>
+              <br />
               <div class="card-body">
                 <h6 class="small text-primary font-weight-bold">
-                  App Designer
+                  3 Blocks of Calmer Nightlife
                 </h6>
-                <h5 class="card-title">Ashley Diaz</h5>
+                <h5 class="card-title">Frenchmen Street</h5>
                 <p>
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                   Magni quos esse tenetur illo qui, nostrum.
                 </p>
-                <div class="socials">
-                  <a href="javascript:void(0)"><i class="ti-facebook"></i> </a>
-                  <a href="javascript:void(0)"><i class="ti-github"></i></a>
-                  <a href="javascript:void(0)"><i class="ti-dropbox"></i></a>
-                  <a href="javascript:void(0)"><i class="ti-twitter"></i></a>
-                </div>
               </div>
             </div>
           </div>
@@ -417,7 +422,9 @@
               </div>
             </div>
           </div>
-          <div class="form">
+          <div class="form form-container">
+            <div id="spinner" class="spinner" style="display: none"></div>
+
             <h6 class="section-title mb-4">RSVP</h6>
             <form id="rsvpForm">
               <div class="form-group">
@@ -426,7 +433,7 @@
                   class="form-control form-control-lg"
                   id="email"
                   aria-describedby="emailHelp"
-                  placeholder="Enter email"
+                  placeholder="Enter email to find invitation"
                   required
                 />
                 <p id="message" class=""></p>
@@ -454,7 +461,7 @@
                   cols="30"
                   rows="7"
                   class="form-control form-control-lg"
-                  placeholder="Leave a note"
+                  placeholder="Leave a note or suggestion"
                 ></textarea>
               </div>
               <button

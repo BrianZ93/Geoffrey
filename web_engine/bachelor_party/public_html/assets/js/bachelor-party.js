@@ -19,25 +19,57 @@ $(document).ready(function () {
   });
 });
 
-// AWS
-// Listener for react wrapper to send guests
-window.receivedData = {}; // Initialize a global variable to store the received data
+// EVENT ID FROM AWS
+const event_id = "76125999-17f0-4f22-b47e-ef4ac16fb1cc";
+let rsvp = true;
 
-window.addEventListener("message", (event) => {
-  if (event.origin !== window.location.origin) {
-    return; // Ignore messages from different origins for security reasons
+// Event listener for email input field
+document.getElementById("email").addEventListener("blur", validateEmail);
+
+function validateEmailFormat(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(String(email).toLowerCase());
+}
+
+async function retrieveGuest(email, event_id) {
+  const spinner = document.getElementById("spinner");
+  spinner.style.display = "block"; // Show spinner
+  const formContainer = document.querySelector(".form-container");
+  formContainer.classList.add("loading"); // Add loading class
+  try {
+    const response = await fetch(
+      "https://op9d8hqeqf.execute-api.us-east-2.amazonaws.com/Production",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          event_id: event_id,
+        }),
+      }
+    );
+
+    const responseBody = await response.json();
+
+    if (response.ok && responseBody.statusCode === 200) {
+      console.log("Guest retrieved successfully:", responseBody);
+      return true;
+    } else if (responseBody.statusCode === 404) {
+      console.log("Guest not found for the specified event and email.");
+    } else {
+      const errorText = JSON.stringify(responseBody); // Get error details
+      console.log("Failed to retrieve guest:", errorText);
+    }
+  } catch (error) {
+    console.error("Error retrieving guest:", error);
+  } finally {
+    spinner.style.display = "none"; // Hide spinner
+    formContainer.classList.remove("loading"); // Remove loading class
   }
-  window.receivedData = event.data; // Store the received data in the global variable
-  // console.log("Data received from parent:", window.receivedData);
-
-  // Log all emails for debugging
-  const guests = window.receivedData.items || [];
-  const emails = guests.map((guest) => guest.email);
-  // console.info("Emails in guest list:", emails);
-
-  // Update email validation with the received guests data
-  document.getElementById("email").addEventListener("blur", validateEmail);
-});
+  return false;
+}
 
 function enableSubmitButton() {
   const submitBtn = document.getElementById("submitBtn");
@@ -53,15 +85,9 @@ function disableSubmitButton() {
   submitBtn.setAttribute("title", "Must enter email address to submit RSVP");
 }
 
-function validateEmail() {
+async function validateEmail() {
   const emailInput = document.getElementById("email").value;
   const messageElem = document.getElementById("message");
-  const guests = window.receivedData.items || [];
-  const emails = guests.map((guest) => getSelection.email);
-
-  console.log("Checking email:", emailInput);
-  console.log("Guests data:", guests);
-  guests.forEach((guest) => console.info("Comparing with:", guest.email));
 
   if (!validateEmailFormat(emailInput)) {
     messageElem.textContent = "Invalid email format.";
@@ -69,41 +95,21 @@ function validateEmail() {
     disableSubmitButton();
     return;
   } else {
-    messageElem.textContent = "Email is valid.";
-    messageElem.className = "success";
-    enableSubmitButton();
+    await retrieveGuest(emailInput, event_id).then((response) => {
+      // console.log(response);
+      if (response) {
+        messageElem.textContent = "Invitation Found! You may now RSVP";
+        messageElem.className = "success";
+        enableSubmitButton();
+      } else {
+        messageElem.textContent = "Invitation not found.";
+        messageElem.className = "error";
+        disableSubmitButton();
+      }
+    });
   }
-
-  // const guestExists = guests.some(
-  //   (guest) => guest.email.toLowerCase() === emailInput.toLowerCase()
-  // );
-  // if (guestExists) {
-  //   messageElem.textContent = "Email is valid and found in the guest list.";
-  //   messageElem.className = "success";
-  //   enableSubmitButton();
-  // } else {
-  //   messageElem.textContent = "Email not found in the guest list.";
-  //   messageElem.className = "error";
-  //   disableSubmitButton();
-  // }
 }
 
-function validateEmailFormat(email) {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(String(email).toLowerCase());
-}
-
-document
-  .getElementById("rsvpForm")
-  .addEventListener("submit", function (event) {
-    const messageElem = document.getElementById("message");
-    if (messageElem.className !== "success") {
-      event.preventDefault();
-      alert("Please provide a valid email address found in the guest list.");
-    }
-  });
-
-// eslint-disable-next-line no-unused-vars
 function selectTab(tab) {
   document.getElementById("attending-tab").classList.remove("active");
   document.getElementById("regrets-tab").classList.remove("active");
@@ -117,103 +123,61 @@ function selectTab(tab) {
   }
 }
 
-// Lambda ARN
-// arn:aws:lambda:us-east-2:061841606853:function:UpdateRSVP
+async function handleRSVPUpdate(event) {
+  event.preventDefault(); // Prevent the form from submitting the traditional way
+  const spinner = document.getElementById("spinner");
+  spinner.style.display = "block"; // Show spinner
+  const formContainer = document.querySelector(".form-container");
+  formContainer.classList.add("loading"); // Add loading class
 
-// Submit RSVP
+  // Get the email, attending, and note values from the input fields
+  const email = document.getElementById("email").value;
+  const note = document.getElementById("note").value;
+
+  // Make sure email and event_id are not empty
+  if (!email || !event_id) {
+    alert("Please enter an email address and event ID.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "https://j71yii2ym0.execute-api.us-east-2.amazonaws.com/Production",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          event_id: event_id,
+          attending: rsvp,
+          note: note,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log("RSVP updated successfully:", result);
+    } else if (response.status === 404) {
+      console.warn("Email or event not found.");
+    } else {
+      const errorText = await response.text(); // Get error details
+      console.error("Failed to update RSVP:", errorText);
+    }
+  } catch (error) {
+    console.error("Error updating RSVP:", error);
+  } finally {
+    spinner.style.display = "none"; // Hide spinner
+    formContainer.classList.remove("loading"); // Remove loading class
+    const messageElem = document.getElementById("message");
+    messageElem.textContent = "";
+    document.getElementById("email").value = "";
+    disableSubmitButton();
+  }
+}
+// Add event listener to the form
 document
   .getElementById("rsvpForm")
-  .addEventListener("submit", async function (event) {
-    event.preventDefault(); // Prevent the form from submitting the traditional way
-
-    const email = document.getElementById("email").value;
-    const note = document.getElementById("note").value;
-
-    const eventDetail = {
-      email: email,
-      note: note,
-      rsvp: rsvp,
-    };
-
-    try {
-      const response = await fetch(
-        `https://op9d8hqeqf.execute-api.us-east-2.amazonaws.com/dev?email=${encodeURIComponent(
-          email
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const guest = await response.json();
-        console.log("Guest retrieved successfully:", guest);
-        alert("Guest retrieved successfully!");
-      } else if (response.status === 404) {
-        alert("Email not found.");
-      } else {
-        const errorText = await response.text(); // Get error details
-        console.error("Failed to retrieve guest:", errorText);
-        alert("Failed to retrieve guest.");
-      }
-    } catch (error) {
-      console.error("Error retrieving guest:", error);
-      alert("An error occurred while retrieving guest.");
-    }
-  });
-
-// // Function to handle the form submission
-// async function handleRSVPUpdate(event) {
-//   event.preventDefault(); // Prevent the form from submitting the traditional way
-
-//   // Get the email, event_id, and attending values from the input fields
-//   const email = document.getElementById("email").value;
-//   const event_id = document.getElementById("event_id").value;
-//   const attending = document.getElementById("attending").checked; // Assuming it's a checkbox
-
-//   // Make sure email and event_id are not empty
-//   if (!email || !event_id) {
-//     alert("Please enter an email address and event ID.");
-//     return;
-//   }
-
-//   try {
-//     const response = await fetch(
-//       "https://j71yii2ym0.execute-api.us-east-2.amazonaws.com/dev/updateRSVP",
-//       {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           email: email,
-//           event_id: event_id,
-//           attending: attending,
-//         }),
-//       }
-//     );
-
-//     if (response.ok) {
-//       const result = await response.json();
-//       console.log("RSVP updated successfully:", result);
-//       alert("RSVP updated successfully!");
-//     } else if (response.status === 404) {
-//       alert("Email or event not found.");
-//     } else {
-//       const errorText = await response.text(); // Get error details
-//       console.error("Failed to update RSVP:", errorText);
-//       alert("Failed to update RSVP.");
-//     }
-//   } catch (error) {
-//     console.error("Error updating RSVP:", error);
-//     alert("An error occurred while updating RSVP.");
-//   }
-// }
-
-// // Add event listener to the form
-// document
-//   .getElementById("rsvpUpdateForm")
-//   .addEventListener("submit", handleRSVPUpdate);
+  .addEventListener("submit", handleRSVPUpdate);
