@@ -4853,6 +4853,12 @@ input[type="button"].btn-block {
   padding: 1rem 1rem;
 }
 
+@media (max-width: 768px) {
+  .navbar {
+    display: none;
+  }
+}
+
 .navbar > .container,
 .navbar > .container-fluid {
   display: -webkit-box;
