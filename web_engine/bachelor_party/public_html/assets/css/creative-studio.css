@@ -12183,7 +12183,7 @@ pre .code {
 }
 
 .header .header-image {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
@@ -12311,13 +12311,13 @@ section.has-bg-img:after {
   z-index: -1;
 }
 
-section.has-bg-img.bg-img-1:after {
+/* section.has-bg-img.bg-img-1:after {
   background-image: url(../imgs/section.jpg);
 }
 
 section.has-bg-img.bg-img-2:after {
   background-image: url(../imgs/header.jpg);
-}
+} */
 
 section .section-subtitle {
   font-size: calc(17px + (23 - 17) * ((100vw - 320px) / (1200 - 320)));
