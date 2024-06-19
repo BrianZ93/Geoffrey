@@ -12184,12 +12184,21 @@ pre .code {
 
 .header .header-image {
   position: relative;
-  /* top: 0; */
-  /* left: 0; */
-  /* width: 100%; */
-  /* height: 100%; */
   object-fit: cover; /* Ensures the image covers the entire container */
   z-index: -1; /* Ensures the image is behind other content */
+}
+
+@media (max-width: 768px) {
+  .header .header-image {
+    display: block; /* Display the image on screens narrower than 768px (typical tablet and mobile sizes) */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the entire container */
+    z-index: -1; /* Ensures the image is behind other content */
+  }
 }
 
 .header .overlay {
