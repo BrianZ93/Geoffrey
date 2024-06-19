@@ -49,10 +49,10 @@ func UpdateGuestInSQLite(db *sql.DB, guest models.Guest) error {
 }
 
 // AddGuestToSQLite inserts a new guest into the SQLite database
-func AddGuestToSQLite(db *sql.DB, guest models.Guest) error {
-	query := `INSERT INTO Events_Guests (Id, Name, Email, PhoneNumber, Attending, RsvpReceived, Note)
-	           VALUES (?, ?, ?, ?, ?, ?, ?)`
-	_, err := db.Exec(query, guest.Id, guest.Name, guest.Email, guest.PhoneNumber, guest.Attending, guest.RsvpReceived, guest.Note)
+func AddGuestToSQLite(db *sql.DB, guest models.Guest, eventId string) error {
+	query := `INSERT INTO Events_Guests (Id, eventId, Name, Email, PhoneNumber, Attending, RsvpReceived, Note)
+	           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+	_, err := db.Exec(query, guest.Id, eventId, guest.Name, guest.Email, guest.PhoneNumber, guest.Attending, guest.RsvpReceived, guest.Note)
 	return err
 }
 

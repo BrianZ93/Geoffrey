@@ -182,6 +182,7 @@ async function handleRSVPUpdate(event) {
     messageElem.textContent = "";
     document.getElementById("email").value = "";
     disableSubmitButton();
+    alert("RSVP Submitted!");
   }
 }
 // Add event listener to the form

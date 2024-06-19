@@ -54,8 +54,11 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 				}
 
 				if !sqlGuestExists {
-					types.AddGuestToSQLite(db, dynamoGuest)
 					logrus.Infof("Guest %s does not exist locally, adding to sqlite database:", dynamoGuest.Name)
+					err = types.AddGuestToSQLite(db, dynamoGuest, event.Id)
+					if err != nil {
+						logrus.Errorf("Error adding guest to sqlite database: %v", err)
+					}
 					sqlGuestExists = false
 				}
 			}
