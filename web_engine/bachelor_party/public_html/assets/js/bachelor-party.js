@@ -19,6 +19,13 @@ $(document).ready(function () {
   });
 });
 
+// Adding jquery code to close the navbar menu on nav-link click
+$(document).ready(function () {
+  $(".nav-link").on("click", function () {
+    $(".navbar-collapse").collapse("hide");
+  });
+});
+
 // EVENT ID FROM AWS
 const event_id = "76125999-17f0-4f22-b47e-ef4ac16fb1cc";
 let rsvp = true;
