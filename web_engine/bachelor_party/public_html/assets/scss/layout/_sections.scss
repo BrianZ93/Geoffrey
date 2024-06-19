@@ -40,12 +40,12 @@ section {
       z-index: -1;
     }
 
-    // &.bg-img-1:after {
-    //     background-image: url(../imgs/section.jpg);
-    // }
-    // &.bg-img-2:after {
-    //     background-image: url(../imgs/header.jpg);
-    // }
+    &.bg-img-1:after {
+      background-image: url(../imgs/section.jpg);
+    }
+    &.bg-img-2:after {
+      background-image: url(../imgs/header.jpg);
+    }
   }
 
   .section-subtitle {
