@@ -29,8 +29,9 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 
 	// Create a map of DynamoDB events for easy lookup
 	dynamoEventMap := make(map[string]models.Event)
-	for _, event := range dynamoEvents {
-		dynamoEventMap[event.Id] = event
+	for _, dynamoEvent := range dynamoEvents {
+		dynamoEventMap[dynamoEvent.Id] = dynamoEvent
+
 	}
 
 	// Compare and add missing events, guests, and venues to DynamoDB
@@ -41,6 +42,22 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 			if err != nil {
 				logrus.Errorf("error writing event to DynamoDB: %v", err)
 				return fmt.Errorf("error writing event to DynamoDB: %v", err)
+			}
+		} else {
+			// If the event does exist check to make sure all of the guests in the dynamoDB table are in the dashboard
+			for _, dynamoGuest := range dynamoEventMap[event.Id].Guests {
+				sqlGuestExists := false
+				for _, sqlGuest := range event.Guests {
+					if dynamoGuest.Id == sqlGuest.Id {
+						sqlGuestExists = true
+					}
+				}
+
+				if !sqlGuestExists {
+					types.AddGuestToSQLite(db, dynamoGuest)
+					logrus.Infof("Guest %s does not exist locally, adding to sqlite database:", dynamoGuest.Name)
+					sqlGuestExists = false
+				}
 			}
 		}
 
@@ -57,6 +74,16 @@ func SyncEventsFromSqLite3ToDynamoDB(db *sql.DB, svc *dynamodb.Client, eventsTab
 				if err != nil {
 					logrus.Errorf("error writing guest to DynamoDB: %v", err)
 					return fmt.Errorf("error writing guest to DynamoDB: %v", err)
+				}
+			}
+
+			// Compare events with dynamoDB entries and add them if they do not exist
+			if exists {
+				dynamoGuest, err := types.FetchGuestFromDynamoDB(svc, guest.Id, guestsTableName)
+				if err != nil {
+					logrus.Errorf("Failed to grab guest from DynamoDB: %v", err)
+				} else {
+					types.CompareGuestDetails(db, guest, *dynamoGuest)
 				}
 			}
 		}
