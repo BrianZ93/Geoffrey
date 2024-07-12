@@ -37,6 +37,7 @@ export class EscrowBreakdown {
 
 export class Mortgage {
   id: string;
+  propertyId: string;
   debtType: DebtType.Installment;
   originationDate: string;
   firstPaymentDate: string;
@@ -52,6 +53,7 @@ export class Mortgage {
 
   constructor(
     id: string,
+    propertyId: string,
     originationDate: string,
     firstPaymentDate: string,
     maturity: string,
@@ -65,6 +67,7 @@ export class Mortgage {
     escrowBreakdown: EscrowBreakdown
   ) {
     this.id = id;
+    this.propertyId = propertyId;
     this.debtType = DebtType.Installment;
     this.originationDate = originationDate;
     this.firstPaymentDate = firstPaymentDate;

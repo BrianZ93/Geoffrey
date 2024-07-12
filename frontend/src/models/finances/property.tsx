@@ -1,4 +1,4 @@
-import { Mortgage } from './debt';
+import { Mortgage } from './debt/RealEstate';
 
 export enum PropertyUse {
   Residential = 0,
@@ -92,6 +92,7 @@ export class Address {
 
 export class Tenant {
   id: string;
+  propertyId: string;
   firstName: string;
   lastName: string;
   address: Address;
@@ -104,6 +105,7 @@ export class Tenant {
 
   constructor(
     id: string,
+    propertyId: string,
     firstName: string,
     lastName: string,
     address: Address,
@@ -115,6 +117,7 @@ export class Tenant {
     otherIncome: number
   ) {
     this.id = id;
+    this.propertyId = propertyId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.address = address;

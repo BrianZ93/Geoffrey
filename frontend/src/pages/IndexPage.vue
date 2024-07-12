@@ -17,6 +17,12 @@
           <suspense>
             <events-page v-if="activePage == 2" />
           </suspense>
+          <suspense>
+            <cookbook-page v-if="activePage == 5" />
+          </suspense>
+          <suspense>
+            <education-page v-if="activePage == 6" />
+          </suspense>
         </div>
       </div>
     </div>
@@ -31,6 +37,8 @@ import SidebarMenu from './../components/SidebarMenu.vue';
 import DashboardPage from './../pages/sub_pages/Dashboard.vue';
 import EventsPage from './../pages/sub_pages/EventsPage.vue';
 import FinancesPage from './../pages/sub_pages/FinancesPage.vue';
+import CookbookPage from './../pages/sub_pages/CookbookPage.vue';
+import EducationPage from './../pages/sub_pages/EducationPage.vue';
 
 // Other Imports
 import { useAppStateStore } from 'src/stores/main-application-state';

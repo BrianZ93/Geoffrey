@@ -33,6 +33,8 @@ const menuItems = ref([
     label: 'Home Maintenance',
     icon: 'construction',
   },
+  { label: 'Cookbook', icon: 'restaurant_menu' },
+  { label: 'Education & Career', icon: 'school' },
 ]);
 
 const setActivePage = (index: number) => {

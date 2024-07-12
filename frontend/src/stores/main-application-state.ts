@@ -6,6 +6,8 @@ enum ActivePage {
   Events = 2,
   Calendar = 3,
   HomeMaintenance = 4,
+  Cookbook = 5,
+  Education = 6,
 }
 
 export const useAppStateStore = defineStore('app-state-store', {

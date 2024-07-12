@@ -3,7 +3,9 @@ package main
 import (
 	"backend/api"
 	"backend/api/aws"
+	cookbookroutes "backend/api/routes/cookbook"
 	eventroutes "backend/api/routes/events"
+	financesroutes "backend/api/routes/finances"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -20,9 +22,23 @@ func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.Info("Starting backend")
 
-	// Create the database connection
+	// Create the sql database connection for events
 	dbPath := "./data/database.sqlite3"
-	db, err := api.InitDb(dbPath)
+	eventsDb, err := api.InitDb(dbPath)
+	if err != nil {
+		logrus.Errorf("Error creating database at %s:", dbPath)
+	}
+
+	// Create the sql database connection for finances
+	dbPath = "./data/finances.sqlite3"
+	financesDb, err := api.InitDb(dbPath)
+	if err != nil {
+		logrus.Errorf("Error creating database at %s:", dbPath)
+	}
+
+	// Create the sql database connection for cookbook
+	dbPath = "./data/cookbook.sqlite3"
+	cookbookDB, err := api.InitDb(dbPath)
 	if err != nil {
 		logrus.Errorf("Error creating database at %s:", dbPath)
 	}
@@ -38,13 +54,27 @@ func main() {
 
 	// Setup API Routes
 	// Table Names
+	// Events
 	eventsTableName := "Events"
 	guestsTableName := "Events_Guests"
 	venuesTableName := "Events_Venues"
 
+	// Finances
+	// financesTableName := "Finances"
+	propertiesTableName := "Properties"
+	mortgagesTableName := "Mortgages"
+	tenantsTableName := "Tenants"
+	incomeTableName := "Income"
+	expensesTableName := "Expenses"
+
+	// Cookbook
+	recipesTableName := "Recipes"
+	ingredientsTableName := "Ingredients"
+	recipeStepsTableName := "RecipeSteps"
+
 	// Create dynamoDB interface
 	dynamoClient := aws.InitDynamoDBClient()
-	// Create events and events_guests table if it does not exist
+	// Create events and events_guests table if it does not exist **ONLY FOR AWS DB**
 	err = aws.CreateTable(dynamoClient, eventsTableName)
 	if err != nil {
 		logrus.Fatalf("Error creating table: %v", err)
@@ -60,17 +90,28 @@ func main() {
 
 	// Grab any events that exist locally and write them to DynamoDB
 	// *** This should really only happen if the dynamoDB table gets wiped ***
-	aws.SyncEventsFromSqLite3ToDynamoDB(db, dynamoClient, eventsTableName, guestsTableName, venuesTableName)
+	aws.SyncEventsFromSqLite3ToDynamoDB(eventsDb, dynamoClient, eventsTableName, guestsTableName, venuesTableName)
 
-	// Event Routes
-	e.POST("/create-event", eventroutes.CreateEvent(db, eventsTableName, dynamoClient))
-	e.GET("/events", eventroutes.GetEventsHandler(db, eventsTableName))
-	e.PUT("/events/:eventId", eventroutes.UpdateEvent(db, eventsTableName, dynamoClient))
+	// EVENT ROUTES
+	e.POST("/create-event", eventroutes.CreateEvent(eventsDb, eventsTableName, dynamoClient))
+	e.GET("/events", eventroutes.GetEventsHandler(eventsDb, eventsTableName))
+	e.PUT("/events/:eventId", eventroutes.UpdateEvent(eventsDb, eventsTableName, dynamoClient))
 
 	// Guests Routes
-	e.POST("/events/:eventId/guests", eventroutes.AddGuest(db, guestsTableName, dynamoClient))
-	e.PUT("/events/:eventId/guests/:guestId", eventroutes.ModifyGuest(db, guestsTableName, dynamoClient))
-	e.DELETE("/events/:eventId/guests/:guestId", eventroutes.DeleteGuest(db, eventsTableName, dynamoClient))
+	e.POST("/events/:eventId/guests", eventroutes.AddGuest(eventsDb, guestsTableName, dynamoClient))
+	e.PUT("/events/:eventId/guests/:guestId", eventroutes.ModifyGuest(eventsDb, guestsTableName, dynamoClient))
+	e.DELETE("/events/:eventId/guests/:guestId", eventroutes.DeleteGuest(eventsDb, eventsTableName, dynamoClient))
+
+	// FINANCES ROUTES
+
+	// Property Routes
+	e.POST("/finances/properties", financesroutes.CreateProperty(financesDb, propertiesTableName, mortgagesTableName, tenantsTableName, incomeTableName, expensesTableName))
+
+	// COOKBOOK ROUTES
+
+	// Recipe Routes
+	e.POST("/cookbook/add-recipe", cookbookroutes.CreateRecipe(cookbookDB, recipesTableName, ingredientsTableName, recipeStepsTableName))
+	e.GET("/cookbook/recipes", cookbookroutes.GetAllRecipes(cookbookDB, recipesTableName, ingredientsTableName, recipeStepsTableName))
 
 	// Starting the backend server
 	logrus.Info("Starting server on port 8080...")

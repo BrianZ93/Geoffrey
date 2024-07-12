@@ -15,7 +15,7 @@ import { ref } from 'vue';
 const props = defineProps<{
   label: string;
   onValueChange: (value: string | null) => void;
-  initialValue?: string;
+  initialValue?: string | null;
 }>();
 
 const inputValue = ref<string | null>('');

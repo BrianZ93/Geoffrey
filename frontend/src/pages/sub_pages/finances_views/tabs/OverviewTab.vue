@@ -1,12 +1,14 @@
 <template>
   <div class="row">
+    <!-- Dialog Boxes -->
+    <AddPropertyDialogBox />
     <!-- Top Row -->
     <div class="finances-overview-top-row">
       <!-- Properties Section -->
       <div class="finances-overview-properties-container section">
         <EmptyComponent
           :onClick="handleAddPropertyDialogOpen"
-          label="No proprties have been added, click below to add one"
+          label="No properties have been added, click below to add one"
         />
       </div>
       <!-- Equities Section -->
@@ -46,17 +48,20 @@
 <script setup lang="ts">
 // import CreatePortfolioDialog from '../../../components/finances/CreatePortfolioDialog.vue';
 // import { useAppStateStore } from 'src/stores/main-application-state';
-// import { useFinancesStore } from 'src/stores/finances-state';
+import { useFinancesStore } from 'src/stores/finances-state';
 // import { computed } from 'vue';
 import EmptyComponent from '../../../../components/styled_objects/EmptyComponent.vue';
+// Dialog Box Imports
+import AddPropertyDialogBox from '../../../../components/finances/AddPropertyDialog.vue';
 
 // const appState = useAppStateStore();
-// const financesState = useFinancesStore();
+const financesState = useFinancesStore();
 
 // const portfolio = computed(() => financesState.activePortfolio);
 
 const handleAddPropertyDialogOpen = () => {
   console.log('add property function to be placed here');
+  financesState.addPropertyDialogBoxOpen = true;
 };
 
 const handleAddEquityDialogOpen = () => {

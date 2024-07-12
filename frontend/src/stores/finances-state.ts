@@ -11,6 +11,8 @@ export const useFinancesStore = defineStore('finances-state-store', {
   state: () => ({
     loadState: FinancesLoadState.loading,
     activePortfolio: Portfolio,
+    // Dialog Boxes
+    addPropertyDialogBoxOpen: false,
   }),
   getters: {},
   actions: {},
