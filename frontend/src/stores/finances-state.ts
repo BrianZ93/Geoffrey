@@ -13,6 +13,8 @@ export const useFinancesStore = defineStore('finances-state-store', {
     activePortfolio: Portfolio,
     // Dialog Boxes
     addPropertyDialogBoxOpen: false,
+    addIncomeDialogBoxOpen: false,
+    addExpenseDialogBoxOpen: false,
   }),
   getters: {},
   actions: {},

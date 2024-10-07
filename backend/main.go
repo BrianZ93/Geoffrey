@@ -111,7 +111,7 @@ func main() {
 
 	// Recipe Routes
 	e.POST("/cookbook/add-recipe", cookbookroutes.CreateRecipe(cookbookDB, recipesTableName, ingredientsTableName, recipeStepsTableName))
-	e.GET("/cookbook/recipes", cookbookroutes.GetAllRecipes(cookbookDB, recipesTableName, ingredientsTableName, recipeStepsTableName))
+	e.GET("/cookbook/recipes", cookbookroutes.GetAllRecipes(cookbookDB, recipesTableName, recipeStepsTableName))
 
 	// Starting the backend server
 	logrus.Info("Starting server on port 8080...")

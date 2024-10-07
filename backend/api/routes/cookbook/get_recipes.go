@@ -12,7 +12,6 @@ import (
 func GetAllRecipes(
 	db *sql.DB,
 	recipesTableName string,
-	ingredientsTableName string,
 	recipeStepsTableName string,
 ) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -27,49 +26,44 @@ func GetAllRecipes(
 
 		for rows.Next() {
 			var recipe models.Recipe
-			if err := rows.Scan(&recipe.Id, &recipe.Name, &recipe.TotalTimeSeconds, &recipe.TotalTimePrepSeconds, &recipe.Country, &recipe.Note); err != nil {
+			if err := rows.Scan(&recipe.ID, &recipe.Name, &recipe.TotalTimeSeconds, &recipe.TotalTimePrepSeconds, &recipe.Country, &recipe.Note); err != nil {
 				return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 			}
 
-			recipeID := &recipe.Id
-
 			// Query for recipe steps for each recipe
-			stepRows, err := db.Query("SELECT ID, RecipeID, Name, ApplianceUsed, CookingAction, TimeSeconds, PrepTimeSeconds, Description, RecipeStage FROM "+recipeStepsTableName+" WHERE RecipeID = ?", recipe.Id)
+			stepRows, err := db.Query("SELECT ID, Name, ApplianceUsed, CookingAction, TimeSeconds, PrepTimeSeconds, Description, RecipeStage FROM "+recipeStepsTableName+" WHERE RecipeID = ?", recipe.ID)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 			}
 			defer stepRows.Close()
 
 			var steps []models.RecipeStep
-			var allIngredients []models.Ingredient
 			for stepRows.Next() {
 				var step models.RecipeStep
-				if err := stepRows.Scan(&step.Id, recipeID, &step.Name, &step.ApplianceUsed, &step.CookingAction, &step.TimeSeconds, &step.PrepTimeSeconds, &step.Description, &step.RecipeStage); err != nil {
+				if err := stepRows.Scan(&step.ID, &step.Name, &step.ApplianceUsed, &step.CookingAction, &step.TimeSeconds, &step.PrepTimeSeconds, &step.Description, &step.RecipeStage); err != nil {
 					return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 				}
 
 				// Query for ingredients for each recipe step
-				stepIngredientRows, err := db.Query("SELECT ID, Name FROM "+ingredientsTableName+" WHERE RecipeStepID = ?", step.Id)
+				ingredientRows, err := db.Query("SELECT ID, Name FROM "+recipeStepsTableName+"_Ingredients WHERE RecipeStepID = ?", step.ID)
 				if err != nil {
 					return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 				}
-				defer stepIngredientRows.Close()
+				defer ingredientRows.Close()
 
 				var stepIngredients []models.Ingredient
-				for stepIngredientRows.Next() {
+				for ingredientRows.Next() {
 					var ingredient models.Ingredient
-					if err := stepIngredientRows.Scan(&ingredient.Id, &ingredient.Name); err != nil {
+					if err := ingredientRows.Scan(&ingredient.ID, &ingredient.Name); err != nil {
 						return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 					}
 					stepIngredients = append(stepIngredients, ingredient)
-					allIngredients = append(allIngredients, ingredient)
 				}
 				step.Ingredients = stepIngredients
 
 				steps = append(steps, step)
 			}
 			recipe.Steps = steps
-			recipe.Ingredients = allIngredients
 
 			recipes = append(recipes, recipe)
 		}

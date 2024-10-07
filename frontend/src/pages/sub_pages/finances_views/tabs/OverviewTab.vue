@@ -30,8 +30,8 @@
       <!-- Section Two -->
       <div class="finances-overview-bottom-container-two">
         <EmptyComponent
-          :onClick="handleAddProjectionDialogOpen"
-          label="No projections have been added, click below to get started"
+          :onClick="handleAddBudgetDialogOpen"
+          label="No budget has been added, click below to get started"
         />
       </div>
       <!-- Section Three -->
@@ -72,7 +72,7 @@ const handleAddDebtDialogOpen = () => {
   console.log('add debt function to be placed here');
 };
 
-const handleAddProjectionDialogOpen = () => {
+const handleAddBudgetDialogOpen = () => {
   console.log('add projection function to be placed here');
 };
 

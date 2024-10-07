@@ -77,7 +77,7 @@ func TestCreateRecipe(t *testing.T) {
 		Name:                 "Test Recipe",
 		TotalTimeSeconds:     3600,
 		TotalTimePrepSeconds: 1800,
-		Country:              "USA",
+		Country:              15,
 		Steps: []models.RecipeStep{
 			{
 				Name:          "Step 1",

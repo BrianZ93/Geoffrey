@@ -138,7 +138,7 @@ func (fp *FlavorProfile) ValidateValue(value int) int {
 }
 
 type Ingredient struct {
-	Id   string `json:"id" dynamodbav:"id"`
+	ID   string `json:"id" dynamodbav:"id"`
 	Name string `json:"name" dynamodbav:"name"`
 }
 
@@ -148,7 +148,7 @@ func (i *Ingredient) CapitalizeWords(value string) string {
 }
 
 type RecipeStep struct {
-	Id              string           `json:"id" dynamodbav:"id"`
+	ID              string           `json:"id" dynamodbav:"id"`
 	Name            string           `json:"name" dynamodbav:"name"`
 	ApplianceUsed   CookingAppliance `json:"applianceUsed" dynamodbav:"applianceUsed"`
 	CookingAction   CookingAction    `json:"cookingAction" dynamodbav:"cookingAction"`
@@ -160,13 +160,13 @@ type RecipeStep struct {
 }
 
 type Recipe struct {
-	Id                   string        `json:"id" dynamodbav:"id"`
+	ID                   string        `json:"id" dynamodbav:"id"`
 	Name                 string        `json:"name" dynamodbav:"name"`
 	Steps                []RecipeStep  `json:"steps" dynamodbav:"steps"`
 	Ingredients          []Ingredient  `json:"ingredients" dynamodbav:"ingredients"`
 	TotalTimeSeconds     int           `json:"totalTimeSeconds" dynamodbav:"totalTimeSeconds"`
 	TotalTimePrepSeconds int           `json:"totalTimePrepSeconds" dynamodbav:"totalTimePrepSeconds"`
 	FlavorProfile        FlavorProfile `json:"flavorProfile" dynamodbav:"flavorProfile"`
-	Country              string        `json:"country" dynamodbav:"country"`
+	Country              int           `json:"country" dynamodbav:"country"`
 	Note                 string        `json:"note,omitempty" dynamodbav:"note,omitempty"`
 }

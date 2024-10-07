@@ -89,7 +89,11 @@
         >
           <AddRecipeConfirmation />
           <q-stepper-navigation>
-            <q-btn color="primary" label="Finish" />
+            <q-btn
+              color="primary"
+              label="Finish"
+              @click="handleSubmitAddRecipe"
+            />
             <q-btn
               flat
               @click="step = 2"
@@ -110,6 +114,8 @@ import { useCookbookStore } from '../../stores/cookbook-state';
 import AddRecipeProfile from '../cookbook/AddRecipePages/AddRecipeProfile.vue';
 import AddSteps from '../cookbook/AddRecipePages/AddSteps.vue';
 import AddRecipeConfirmation from '../cookbook/AddRecipePages/AddRecipeConfirmation.vue';
+import { addRecipe } from '../../api/cookbook/add_recipe';
+import { Recipe } from '../../models/cookbook/recipes';
 
 // Triggers the dialog to open - set this to computed variable from store
 const cookbookState = useCookbookStore();
@@ -118,4 +124,14 @@ const recipeProfileComplete = computed(
   () => cookbookState.recipeProfileComplete
 );
 const step = ref<number>(1);
+
+const handleSubmitAddRecipe = async () => {
+  const recipeToAdd = cookbookState.recipeAdding as Recipe;
+  try {
+    console.log('Attempting');
+    await addRecipe(recipeToAdd);
+  } catch (error) {
+    console.error('Error adding recipe: ', error);
+  }
+};
 </script>
