@@ -27,6 +27,7 @@
           <date-picker
             label="Event Date"
             :onUpdate="handleDateUpdate"
+            :isRange="true"
             :initial-date="initialDateValue"
           />
         </q-card-section>

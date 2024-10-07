@@ -23,7 +23,11 @@
             :onValueChange="handleEventNameChange"
           />
           <!-- Event Date -->
-          <date-picker label="Event Date" :onUpdate="handleDateUpdate" />
+          <date-picker
+            label="Event Date"
+            :isRange="true"
+            :onUpdate="handleDateUpdate"
+          />
         </q-card-section>
       </q-card-section>
 
